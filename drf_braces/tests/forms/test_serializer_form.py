@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 import unittest
 from datetime import datetime
 
