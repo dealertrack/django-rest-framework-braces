@@ -29,5 +29,17 @@ class ValueAsTextFieldMixin(object):
             return six.text_type(data)
         return data
 
-    def run_validation(self, data=empty):
-        return self.to_string_value(super(ValueAsTextFieldMixin, self).run_validation(data))
+    def prepare_value_for_validation(self, data):
+        return data
+
+    def run_validation(self, value=empty):
+        (is_empty_value, value) = self.validate_empty_values(value)
+        if is_empty_value:
+            return value
+
+        value = self.prepare_value_for_validation(value)
+        value = self.to_internal_value(value)
+        self.run_validators(value)
+        value = self.to_string_value(value)
+
+        return value

@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 
 import six
+from django.utils.translation import gettext as _
 
 from . import _fields as fields
 from .mixins import EmptyStringFieldMixing, ValueAsTextFieldMixin
