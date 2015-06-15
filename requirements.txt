@@ -1,0 +1,4 @@
+django
+six
+djangorestframework
+dateutils
