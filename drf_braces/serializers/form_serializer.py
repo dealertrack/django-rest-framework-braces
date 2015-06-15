@@ -10,7 +10,7 @@ from ..utils import (
     get_attr_from_base_classes,
     get_class_name_with_new_suffix,
 )
-from . import fields
+from .. import fields
 
 
 def make_form_serializer_field(field_class):
