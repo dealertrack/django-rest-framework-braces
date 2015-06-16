@@ -38,6 +38,63 @@ def find_matching_class_kwargs(reference_object, klass):
     }
 
 
+def add_base_class_to_instance(instance, base_class=None, new_name=None):
+    """
+    Generic utility for adding a base class to an instance.
+
+    This function returns a copy of the given instance which
+    will then include the new base_class in its ``__mro__``.
+
+    The way that is done internally is it creates a brand new
+    class with correct bases. Then the newly created class is
+    instantiated. Since ``__init__`` could be expensive operation
+    in any of the base classes of the original instance mro,
+    nto make it cheap, we temporarily switch __init__ with
+    super simple implementation which does nothing but only
+    instantiates class. Once instantiated, then we copy all of the
+    instance attributes to the newly created instance.
+    Finally, then we pop our mock ``__init__`` implementation.
+
+    Args:
+        instance (object): Instance of any object
+        base_class (type): Any class which will be added as first class
+            in the newly copied instance mro.
+
+    Returns:
+        Shallow copy of ``instance`` which will also inherit ``base_class``.
+    """
+    # overwrite __init__ since that is mainly responsible for setting
+    # instance state but since we explicitly copy it, we can
+    # make __init__ a noop method
+    def __init__(self, *args, **kwargs):
+        pass
+
+    if base_class is not None and base_class not in instance.__class__.mro():
+        base_classes = (base_class, instance.__class__)
+    else:
+        base_classes = (instance.__class__,)
+
+    new_field_class = type(
+        str(new_name or instance.__class__.__name__),
+        base_classes,
+        {'__init__': __init__}
+    )
+
+    new_instance = new_field_class()
+    new_instance.__dict__.update(instance.__dict__)
+
+    # we added __init__ just for faster instantiation
+    # since then we dont have to copy all the parameters
+    # when creating new instance and then update its state
+    # however after we instantiated the class, we want to
+    # pop our silly __init__ implementation so that if somebody
+    # wants to instantiate instance.__class__(), it will
+    # use the original __init__ method
+    del new_field_class.__init__
+
+    return new_instance
+
+
 def initialize_class_using_reference_object(reference_object, klass, **kwargs):
     """
     Utility function which instantiates ``klass`` by extracting ``__init__``

@@ -5,6 +5,7 @@ from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass
 from rest_framework import serializers
 
+from .. import fields
 from ..utils import (
     initialize_class_using_reference_object,
     reduce_attr_dict_from_base_classes,
@@ -13,6 +14,12 @@ from .fields import ISO8601DateTimeField
 
 
 SERIALIZER_FORM_FIELD_MAPPING = {
+    fields.BooleanField: forms.BooleanField,
+    fields.CharField: forms.CharField,
+    fields.ChoiceField: forms.ChoiceField,
+    fields.DateTimeField: ISO8601DateTimeField,
+    fields.EmailField: forms.EmailField,
+    fields.IntegerField: forms.IntegerField,
     serializers.BooleanField: forms.BooleanField,
     serializers.CharField: forms.CharField,
     serializers.ChoiceField: forms.ChoiceField,
@@ -49,7 +56,7 @@ class SerializerFormMeta(DeclarativeFieldsMetaclass):
 
         meta = attrs.pop('Meta', None)
 
-        if not parents:
+        if not parents or attrs.pop('_is_base', False):
             return super(SerializerFormMeta, cls).__new__(cls, name, bases, attrs)
 
         attrs['_meta'] = options = SerializerFormOptions(meta, name=name)
@@ -130,7 +137,7 @@ class SerializerFormBase(forms.Form):
 
 
 class SerializerForm(six.with_metaclass(SerializerFormMeta, SerializerFormBase)):
-    pass
+    _is_base = True
 
 
 def form_from_serializer(serializer, **kwargs):

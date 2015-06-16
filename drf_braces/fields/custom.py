@@ -1,16 +1,21 @@
 from __future__ import print_function, unicode_literals
+import inspect
 
+import pytz
 import six
 from django.utils.translation import gettext as _
 
 from . import _fields as fields
-from .mixins import EmptyStringFieldMixing, ValueAsTextFieldMixin
+from .mixins import EmptyStringFieldMixin, ValueAsTextFieldMixin
 
 
 class UnvalidatedField(fields._UnvalidatedField):
     """
     Same as DRF's ``_UnvalidatedField``, except this is a public class.
     """
+
+    def run_validators(self, value):
+        return
 
 
 class PositiveIntegerField(fields.IntegerField):
@@ -24,7 +29,17 @@ class PositiveIntegerField(fields.IntegerField):
         super(PositiveIntegerField, self).__init__(*args, **kwargs)
 
 
-class NonValidatingChoiceField(EmptyStringFieldMixing, fields.ChoiceField):
+class TZDateTimeField(fields.DateTimeField):
+    """
+    Same as DateTimeField except this field guarantees to return time-zone aware dates.
+    """
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('default_timezone', pytz.utc)
+        super(TZDateTimeField, self).__init__(*args, **kwargs)
+
+
+class NonValidatingChoiceField(EmptyStringFieldMixin, fields.ChoiceField):
     """
     ChoiceField subclass that skips the validation of "choices".
     It does apply 'required' validation, and any other validation
@@ -42,10 +57,11 @@ class NonValidatingChoiceField(EmptyStringFieldMixing, fields.ChoiceField):
             return six.text_type(data)
 
 
-class NumericField(ValueAsTextFieldMixin, EmptyStringFieldMixing, fields.IntegerField):
+class NumericField(ValueAsTextFieldMixin, fields.IntegerField):
     default_error_messages = {
         'invalid': _('Enter a whole number.'),
     }
 
 
-__all__ = [name for name, value in locals().items() if issubclass(value, fields.Field)]
+__all__ = [name for name, value in locals().items()
+           if inspect.isclass(value) and issubclass(value, fields.Field)]

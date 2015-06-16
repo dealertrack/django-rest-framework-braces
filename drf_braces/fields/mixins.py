@@ -4,9 +4,9 @@ import six
 from rest_framework.fields import empty
 
 
-class EmptyStringFieldMixing(object):
+class EmptyStringFieldMixin(object):
     def validate_empty_values(self, data):
-        is_empty, data = super(EmptyStringFieldMixing, self).validate_empty_values(data)
+        is_empty, data = super(EmptyStringFieldMixin, self).validate_empty_values(data)
         if not is_empty and data == '':
             if self.required:
                 self.fail('required')

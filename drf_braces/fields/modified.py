@@ -1,4 +1,5 @@
 from __future__ import print_function, unicode_literals
+import inspect
 
 from . import _fields as fields
 
@@ -23,4 +24,5 @@ class DecimalField(fields.DecimalField):
         return super(DecimalField, self).quantize(value)
 
 
-__all__ = [name for name, value in locals().items() if issubclass(value, fields.Field)]
+__all__ = [name for name, value in locals().items()
+           if inspect.isclass(value) and issubclass(value, fields.Field)]

@@ -5,17 +5,32 @@ import six
 from django import forms
 from rest_framework import serializers
 
+from .. import fields
 from ..utils import (
     find_matching_class_kwargs,
     get_attr_from_base_classes,
     get_class_name_with_new_suffix,
+    reduce_attr_dict_from_instance,
 )
-from .. import fields
+
+
+class FormSerializerFieldMixin(object):
+    def run_validation(self, data):
+        try:
+            return super(FormSerializerFieldMixin, self).run_validation(data)
+        except (serializers.ValidationError, forms.ValidationError):
+            # Only handle a ValidationError if the full validation is
+            # requested or if field is in minimum required in the case
+            # of partial validation.
+            if any([not self.parent.partial,
+                    self.field_name in self.parent.Meta.minimum_required]):
+                raise
+            raise serializers.SkipField
 
 
 def make_form_serializer_field(field_class):
     return type(
-        get_class_name_with_new_suffix(field_class.__class__, 'Field', 'FormSerializerField'),
+        get_class_name_with_new_suffix(field_class, 'Field', 'FormSerializerField'),
         (FormSerializerFieldMixin, field_class,),
         {}
     )
@@ -48,20 +63,6 @@ class FormSerializerFailure(object):
     fail = 'fail'
     drop = 'drop'
     ignore = 'ignore'
-
-
-class FormSerializerFieldMixin(object):
-    def run_validation(self, data):
-        try:
-            return super(FormSerializerFieldMixin, self).run_validation(data)
-        except (serializers.ValidationError, forms.ValidationError):
-            # Only handle a ValidationError if the full validation is
-            # requested or if field is in minimum required in the case
-            # of partial validation.
-            if any([not self.parent.partial,
-                    self.field_name in self.parent.Meta.minimum_required]):
-                raise
-            raise serializers.SkipField
 
 
 class FormSerializerOptions(object):
@@ -164,31 +165,6 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
 
         return instance
 
-    def _get_field_mapping(self):
-        """
-        Get the mapping of ``django.forms.fields`` field types to
-        ``rest_framework.fields`` types.
-        Subclasses can update this mapping by defining a
-        `field_mapping` class variable.
-
-        This method does not exist in parent class.
-
-        :return: dict of django field cls --> rest_framework field cls
-        """
-        field_mapping = {}
-        field_mapping.update(self._default_field_mapping)
-
-        # get all field mappings from super methods
-        for base in self.__class__.mro()[::-1]:
-            field_mapping.update(getattr(base, 'field_mapping', {}))
-
-        # this should of been picked by previous lookup
-        # however __init__ can do some magic hence should
-        # update just in case
-        field_mapping.update(getattr(self, 'field_mapping', {}))
-
-        return field_mapping
-
     def get_fields(self):
         """
         Return all the fields that should be serialized for the form.
@@ -199,7 +175,11 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
         form = self.Meta.form
         form_fields = form.base_fields
 
-        field_mapping = self._get_field_mapping()
+        field_mapping = reduce_attr_dict_from_instance(
+            self,
+            lambda i: getattr(i, 'field_mapping', {}),
+            FORM_SERIALIZER_FIELD_MAPPING
+        )
 
         # Iterate over the form fields, creating an
         # instance of serializer field for each.
@@ -333,36 +313,14 @@ class LazyLoadingValidationsMixin(object):
                     six.text_type(key): key for key in OrderedDict(form_field.choices).keys()
                 }
 
-
-class SerializerDataMapper(object):
-    """
-    Knows how to look at a Serializer and determine how to map
-    data to it.
-    This class will translate data from dict format A to format B.
-    The structure for format B will be inferred from the serializer
-    provided in `__init__`.
-
-    :param serializer_class: The serializer that will be destination
-    :param serializer_context: The serializer context
-    """
-
-    parser_class = None
-
-    def __init__(self, serializer_class, serializer_context):
-        self.serializer_class = serializer_class
-        self.context = serializer_context
-
-    def map_data(self, data):
+    def to_internal_value(self, data):
         """
-        Perform the mapping.
-        :param data: input data dictionary
-        :return: output data dictionary
+        We have tons of "choices" loading in form `__init__()`,
+        (so that DB query is evaluated at last possible moment) so require the
+        use of ``common.common_json.serializers.LazyLoadingValidationsMixin``.
         """
-        common_json_parser = self.parser_class(context=self.context)
-        mapped_data = common_json_parser(data)
-        mapped_data = {k: v for k, v in mapped_data.items() if v}
-
-        return mapped_data
+        self.repopulate_form_fields()
+        return super(LazyLoadingValidationsMixin, self).to_internal_value(data)
 
 
 def set_form_partial_validation(form, minimum_required):
