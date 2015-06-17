@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals
+import json
 from collections import OrderedDict
 
-import json
 import six
 from django.conf import settings
 from rest_framework import parsers

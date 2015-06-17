@@ -24,5 +24,12 @@ class DecimalField(fields.DecimalField):
         return super(DecimalField, self).quantize(value)
 
 
+class DateTimeField(fields.DateTimeField):
+    def __init__(self, *args, **kwargs):
+        super(DateTimeField, self).__init__(*args, **kwargs)
+        if 'default_timezone' in kwargs:
+            self.default_timezone = kwargs['default_timezone']
+
+
 __all__ = [name for name, value in locals().items()
            if inspect.isclass(value) and issubclass(value, fields.Field)]

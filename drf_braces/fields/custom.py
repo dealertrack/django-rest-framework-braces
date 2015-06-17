@@ -29,14 +29,14 @@ class PositiveIntegerField(fields.IntegerField):
         super(PositiveIntegerField, self).__init__(*args, **kwargs)
 
 
-class TZDateTimeField(fields.DateTimeField):
+class UTCDateTimeField(fields.DateTimeField):
     """
     Same as DateTimeField except this field guarantees to return time-zone aware dates.
     """
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('default_timezone', pytz.utc)
-        super(TZDateTimeField, self).__init__(*args, **kwargs)
+        super(UTCDateTimeField, self).__init__(*args, **kwargs)
 
 
 class NonValidatingChoiceField(EmptyStringFieldMixin, fields.ChoiceField):
