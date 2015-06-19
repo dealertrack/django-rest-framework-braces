@@ -9,5 +9,5 @@ Development Lead
 
 Contributors
 ~~~~~~~~~~~~
-* Khaled Porlin - https://github.com/porlin72
 
+* Khaled Porlin - https://github.com/porlin72
