@@ -80,7 +80,17 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         )
 
         if isinstance(serializer, serializers.ListSerializer):
-            serializer.child = _create_enforce_validation_serializer(serializer.child)
+            serializer.child = _create_enforce_validation_serializer(
+                serializer.child,
+                strict_mode_by_default=strict_mode_by_default
+            )
+
+            # kwargs are used to take a deepcopy of the fields
+            # so we need to adjust the child kwargs not to loose
+            # reference to our custom child serializer
+            if 'child' in serializer._kwargs:
+                serializer._kwargs['child'] = serializer.child
+
             return serializer
 
         fields = serializer.fields
@@ -88,6 +98,14 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
 
     if not strict_mode_by_default and not hasattr(serializer, 'must_validate_fields'):
         serializer.must_validate_fields = []
+
+        # this is necessary for deepcopy to work when
+        # root serializer is instantiated it does deepcopy
+        # on serializer._declared_fields which re-instantiates
+        # all child fields hence must_validate_fields will be lost
+        # adding it to the class makes it persistent
+        if not inspect.isclass(serializer):
+            serializer.__class__.must_validate_fields = []
 
     # cant use .items() since we need to adjust dictionary
     # within the loop so we cant be looping over the dict
@@ -99,7 +117,10 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         replacement = None
 
         if isinstance(field, serializers.BaseSerializer):
-            replacement = _create_enforce_validation_serializer(field, strict_mode_by_default)
+            replacement = _create_enforce_validation_serializer(
+                field,
+                strict_mode_by_default=strict_mode_by_default
+            )
 
         elif isinstance(field, serializers.Field):
             replacement = add_base_class_to_instance(
@@ -153,7 +174,7 @@ def create_enforce_validation_serializer(serializer=None, **kwargs):
     #       class MySerializer(...)
     # or used as regular function
     # e.g. function(Serializer, foo=bar)
-    if serializer is not None and issubclass(serializer, serializers.Serializer):
+    if inspect.isclass(serializer) and issubclass(serializer, serializers.Serializer):
         return _create_enforce_validation_serializer(serializer, **kwargs)
 
     # used as decorator with parameters

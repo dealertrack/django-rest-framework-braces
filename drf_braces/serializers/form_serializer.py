@@ -14,6 +14,25 @@ from ..utils import (
 )
 
 
+class FormSerializerFailure(object):
+    """
+    Enum for the possible form validation failure modes.
+
+    'fail': validation failures should be added to self.errors
+        and `is_valid()` should return False.
+
+    'drop': validation failures for a given attribute will result in
+        that attribute being dropped from `cleaned_data`;
+        `is_valid()` will return True.
+
+    'ignore': validation failures will be ignored, and the (invalid)
+        data provided will be preserved in `cleaned_data`.
+    """
+    fail = 'fail'
+    drop = 'drop'
+    ignore = 'ignore'
+
+
 class FormSerializerFieldMixin(object):
     def run_validation(self, data):
         try:
@@ -23,6 +42,7 @@ class FormSerializerFieldMixin(object):
             # requested or if field is in minimum required in the case
             # of partial validation.
             if any([not self.parent.partial,
+                    self.parent.Meta.failure_mode == FormSerializerFailure.fail,
                     self.field_name in self.parent.Meta.minimum_required]):
                 raise
             raise serializers.SkipField
@@ -42,27 +62,11 @@ FORM_SERIALIZER_FIELD_MAPPING = {
     forms.ChoiceField: make_form_serializer_field(fields.ChoiceField),
     forms.BooleanField: make_form_serializer_field(fields.BooleanField),
     forms.IntegerField: make_form_serializer_field(fields.IntegerField),
-    forms.fields.EmailField: make_form_serializer_field(fields.EmailField),
+    forms.EmailField: make_form_serializer_field(fields.EmailField),
+    forms.DateTimeField: make_form_serializer_field(fields.DateTimeField),
+    forms.DateField: make_form_serializer_field(fields.DateField),
+    forms.TimeField: make_form_serializer_field(fields.TimeField),
 }
-
-
-class FormSerializerFailure(object):
-    """
-    Enum for the possible form validation failure modes.
-
-    'fail': validation failures should be added to self.errors
-        and `is_valid()` should return False.
-
-    'drop': validation failures for a given attribute will result in
-        that attribute being dropped from `cleaned_data`;
-        `is_valid()` will return True.
-
-    'ignore': validation failures will be ignored, and the (invalid)
-        data provided will be preserved in `cleaned_data`.
-    """
-    fail = 'fail'
-    drop = 'drop'
-    ignore = 'ignore'
 
 
 class FormSerializerOptions(object):
@@ -120,7 +124,7 @@ class FormSerializerMeta(serializers.SerializerMetaclass):
         return super(FormSerializerMeta, cls).__new__(cls, name, bases, attrs)
 
 
-class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializer)):
+class FormSerializerBase(serializers.Serializer):
     """
     The base Form serializer class.
     When a subclassing serializer is validated or saved, this will
@@ -142,7 +146,7 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
 
         self.form_instance = None
 
-        super(FormSerializer, self).__init__(*args, **kwargs)
+        super(FormSerializerBase, self).__init__(*args, **kwargs)
 
     def get_form(self, data=None, **kwargs):
         """
@@ -171,19 +175,17 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
         This is a hook provided by parent class.
         :return: dict of {'field_name': serializer_field_instance}
         """
-        ret = super(FormSerializer, self).get_fields()
-        form = self.Meta.form
-        form_fields = form.base_fields
+        ret = super(FormSerializerBase, self).get_fields()
 
         field_mapping = reduce_attr_dict_from_instance(
             self,
-            lambda i: getattr(i, 'field_mapping', {}),
+            lambda i: getattr(getattr(i, 'Meta', None), 'field_mapping', {}),
             FORM_SERIALIZER_FIELD_MAPPING
         )
 
         # Iterate over the form fields, creating an
         # instance of serializer field for each.
-        for field_name, form_field in form_fields.iteritems():
+        for field_name, form_field in self.Meta.form.base_fields.items():
             # if field is already defined via declared fields
             # skip mapping it from forms which then honors
             # the custom validation defined on the DRF declared field
@@ -237,7 +239,7 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
         """
         attrs = find_matching_class_kwargs(form_field, serializer_field_class)
 
-        if hasattr(form_field, 'initial') and form_field.initial:
+        if getattr(form_field, 'initial', None):
             attrs['default'] = form_field.initial
 
         # avoid "May not set both `required` and `default`"
@@ -285,6 +287,10 @@ class FormSerializer(six.with_metaclass(FormSerializerMeta, serializers.Serializ
         )
 
 
+class FormSerializer(six.with_metaclass(FormSerializerMeta, FormSerializerBase)):
+    pass
+
+
 class LazyLoadingValidationsMixin(object):
     """
     Provides a method for re-evaluating the validations for
@@ -306,9 +312,9 @@ class LazyLoadingValidationsMixin(object):
         """
         instance = self.get_form()
 
-        for form_field_name, form_field in instance.fields.iteritems():
+        for form_field_name, form_field in instance.fields.items():
             if hasattr(form_field, 'choices'):
-                self.fields[form_field_name].choices = form_field.choices
+                self.fields[form_field_name].choices = OrderedDict(form_field.choices)
                 self.fields[form_field_name].choice_strings_to_values = {
                     six.text_type(key): key for key in OrderedDict(form_field.choices).keys()
                 }
@@ -332,6 +338,6 @@ def set_form_partial_validation(form, minimum_required):
     :param minimum_required: list of minimum required fields
     :return: None
     """
-    for field_name, field in form.fields.iteritems():
+    for field_name, field in form.fields.items():
         if field_name not in minimum_required:
             field.required = False
