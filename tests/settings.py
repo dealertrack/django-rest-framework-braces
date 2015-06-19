@@ -14,7 +14,7 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'drf_braces',
     'tests',
 
@@ -25,7 +25,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django_extensions',
-)
+]
+
+MIDDLEWARE_CLASSES = []
 
 STATIC_URL = '/static/'
 SECRET_KEY = 'foo'
