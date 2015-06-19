@@ -19,7 +19,7 @@ class DecimalField(fields.DecimalField):
         )
 
     def quantize(self, value):
-        if self.max_digits is None:
+        if self.max_digits is None or self.decimal_places is None:
             return value
         return super(DecimalField, self).quantize(value)
 
