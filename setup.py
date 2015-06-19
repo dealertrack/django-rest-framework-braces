@@ -28,12 +28,12 @@ test_requirements = (
 )
 
 setup(
-    name='django-rest-framework-braces',
+    name='django-rest-braces',
     version=__version__,
     author=__author__,
     description='Collection of utilities for working with DRF',
     long_description='\n\n'.join([readme, history, authors, licence]),
-    url='https://github.com/dealertrack/django-rest-framework-braces',
+    url='https://github.com/dealertrack/django-rest-braces',
     license='MIT',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=requirements,
