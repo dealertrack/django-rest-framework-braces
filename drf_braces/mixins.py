@@ -19,6 +19,9 @@ class MapDataViewMixin(object):
     # Leave None if you don't require mapping
     data_mapper_class = None
 
+    def get_mapper_context(self):
+        return self.get_serializer_context()
+
     def get_data(self, mapper_class=None):
         """
         Get data for serialization.
@@ -27,7 +30,7 @@ class MapDataViewMixin(object):
             mapper_class = self.data_mapper_class
 
         if mapper_class is not None:
-            return mapper_class(self.get_serializer_context())(self.request.data)
+            return mapper_class(context=self.get_mapper_context())(self.request.data)
 
         return self.request.data
 

@@ -1,15 +1,22 @@
 from __future__ import print_function, unicode_literals
+import unittest
 from collections import OrderedDict
 from datetime import datetime
-import unittest
-import mock
-from django import forms
 
-from rest_framework import fields, serializers
+import mock
 import six
-from drf_braces.serializers.form_serializer import FormSerializerMeta, FormSerializerOptions, \
-    FormSerializerBase, FormSerializerFieldMixin, make_form_serializer_field, FormSerializer, \
-    LazyLoadingValidationsMixin
+from django import forms
+from rest_framework import fields, serializers
+
+from drf_braces.serializers.form_serializer import (
+    FormSerializer,
+    FormSerializerBase,
+    FormSerializerFieldMixin,
+    FormSerializerMeta,
+    FormSerializerOptions,
+    LazyLoadingValidationsMixin,
+    make_form_serializer_field,
+)
 
 
 TESTING_MODULE = 'drf_braces.serializers.form_serializer'

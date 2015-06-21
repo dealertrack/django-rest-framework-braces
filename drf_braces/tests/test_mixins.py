@@ -75,7 +75,9 @@ class TestMapDataViewMixin(unittest.TestCase):
         actual = self.view.get_data()
 
         self.assertEqual(actual, mapper.return_value.return_value)
-        mapper.assert_called_once_with(mock_get_serializer_context.return_value)
+        mapper.assert_called_once_with(
+            context=mock_get_serializer_context.return_value
+        )
         mapper.return_value.assert_called_once_with(mock.sentinel.data)
 
     @mock.patch.object(GenericAPIView, 'get_serializer_context')
@@ -84,7 +86,9 @@ class TestMapDataViewMixin(unittest.TestCase):
         actual = self.view.get_data(mapper_class=mapper)
 
         self.assertEqual(actual, mapper.return_value.return_value)
-        mapper.assert_called_once_with(mock_get_serializer_context.return_value)
+        mapper.assert_called_once_with(
+            context=mock_get_serializer_context.return_value
+        )
         mapper.return_value.assert_called_once_with(mock.sentinel.data)
 
 
