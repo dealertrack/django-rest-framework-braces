@@ -1,4 +1,5 @@
 from __future__ import print_function, unicode_literals
+import inspect
 
 import six
 from django import forms
@@ -141,10 +142,7 @@ class SerializerForm(six.with_metaclass(SerializerFormMeta, SerializerFormBase))
 
 
 def form_from_serializer(serializer, **kwargs):
-    assert isinstance(serializer, type), (
-        ''
-    )
-    assert issubclass(serializer, serializers.BaseSerializer), (
+    assert inspect.isclass(serializer) and issubclass(serializer, serializers.BaseSerializer), (
         'Can only create forms from DRF Serializers'
     )
     kwargs.update({'serializer': serializer})
