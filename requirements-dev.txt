@@ -1,0 +1,11 @@
+-r requirements.txt
+coverage
+django-extensions
+flake8
+mock
+Sphinx
+sphinx-autobuild
+sphinx-rtd-theme
+tox
+watchdog
+Werkzeug
