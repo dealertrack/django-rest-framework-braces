@@ -84,6 +84,7 @@ class FormSerializerOptions(object):
         self.form = getattr(meta, 'form', None)
         self.failure_mode = getattr(meta, 'failure_mode', FormSerializerFailure.fail)
         self.minimum_required = getattr(meta, 'minimum_required', [])
+        self.field_mapping = getattr(meta, 'field_mapping', {})
 
         assert self.form, (
             'Class {serializer_class} missing "Meta.form" attribute'.format(
@@ -197,9 +198,11 @@ class FormSerializerBase(serializers.Serializer):
             except KeyError:
                 raise TypeError(
                     "{field} is not mapped to a serializer field. "
-                    "Please add {field} to {serializer}.Meta.field_mapping".format(
+                    "Please add {field} to {serializer}.Meta.field_mapping. "
+                    "Currently mapped fields: {mapped}".format(
                         field=form_field.__class__.__name__,
                         serializer=self.__class__.__name__,
+                        mapped=', '.join(sorted([i.__name__ for i in field_mapping.keys()]))
                     )
                 )
             else:

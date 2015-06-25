@@ -102,7 +102,8 @@ class TestFormSerializerOptions(unittest.TestCase):
 
         self.assertEqual(options.form, meta.form)
         self.assertEqual(options.failure_mode, 'fail')
-        self.assertEqual(options.minimum_required, options.minimum_required)
+        self.assertEqual(options.minimum_required, meta.minimum_required)
+        self.assertEqual(options.field_mapping, options.field_mapping)
 
     def test_init_invalid(self):
         with self.assertRaises(AssertionError):
