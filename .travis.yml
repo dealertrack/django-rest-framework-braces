@@ -21,5 +21,4 @@ install:
 # command to run tests, e.g. python setup.py test
 script: make check
 
-# after_success:
-#   coveralls
+after_success: coveralls
