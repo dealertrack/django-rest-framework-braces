@@ -13,7 +13,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/dealertrack/django-rest-braces/issues.
+Report bugs at https://github.com/dealertrack/django-rest-framework-braces/issues.
 
 If you are reporting a bug, please include:
 
@@ -44,7 +44,7 @@ Submit Feedback
 ~~~~~~~~~~~~~~~
 
 The best way to send feedback is to file an issue at
-https://github.com/dealertrack/django-rest-braces/issues.
+https://github.com/dealertrack/django-rest-framework-braces/issues.
 
 If you are proposing a feature:
 
@@ -56,17 +56,17 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `django-rest-braces` for local development.
+Ready to contribute? Here's how to set up `django-rest-framework-braces` for local development.
 
-1. Fork the `django-rest-braces` repo on GitHub.
+1. Fork the `django-rest-framework-braces` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/django-rest-braces.git
+    $ git clone git@github.com:your_name_here/django-rest-framework-braces.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
     $ mkvirtualenv drf-braces
-    $ cd django-rest-braces/
+    $ cd django-rest-framework-braces/
     $ make install
 
 4. Create a branch for local development::
@@ -99,5 +99,5 @@ Before you submit a pull request, check that it meets these guidelines:
    Put your new functionality into a function with a docstring,
    and add the feature to the list in README.rst.
 3. The pull request should work for Python 2.7, 3.4, and for PyPy.
-   Check https://travis-ci.org/dealertrack/django-rest-braces/pull_requests
+   Check https://travis-ci.org/dealertrack/django-rest-framework-braces/pull_requests
    and make sure that the tests pass for all supported Python versions.
