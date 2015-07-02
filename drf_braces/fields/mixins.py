@@ -14,6 +14,11 @@ class EmptyStringFieldMixin(object):
                 return True, data
         return is_empty, data
 
+    def to_representation(self, value):
+        if value in ('', None) and not self.required:
+            return value
+        return super(EmptyStringFieldMixin, self).to_representation(value)
+
 
 class AllowBlankFieldMixin(object):
     def __init__(self, *args, **kwargs):

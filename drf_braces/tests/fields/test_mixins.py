@@ -15,7 +15,7 @@ class TestEmptyStringFieldMixin(unittest.TestCase):
     def setUp(self):
         super(TestEmptyStringFieldMixin, self).setUp()
 
-        class Field(EmptyStringFieldMixin, fields.CharField):
+        class Field(EmptyStringFieldMixin, fields.IntegerField):
             pass
 
         self.field = Field()
@@ -38,6 +38,19 @@ class TestEmptyStringFieldMixin(unittest.TestCase):
         actual = self.field.validate_empty_values(None)
 
         self.assertTupleEqual(actual, (True, None))
+
+    def test_representation(self):
+        self.field.required = False
+
+        self.assertEqual(self.field.to_representation('50'), 50)
+        self.assertEqual(self.field.to_representation(''), '')
+
+    def test_representation_required(self):
+        self.field.required = True
+
+        self.assertEqual(self.field.to_representation('50'), 50)
+        with self.assertRaises(ValueError):
+            self.field.to_representation('')
 
 
 class TestAllowBlankFieldMixin(unittest.TestCase):
