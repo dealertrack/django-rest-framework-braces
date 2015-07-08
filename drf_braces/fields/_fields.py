@@ -5,32 +5,45 @@ from rest_framework import fields
 from rest_framework.fields import *  # noqa
 from rest_framework.fields import _UnvalidatedField  # noqa
 
-from .mixins import AllowBlankFieldMixin, EmptyStringFieldMixin
+from .mixins import AllowBlankNullFieldMixin, EmptyStringFieldMixin
 
 
-EMPTY_STRING_FIELDS = [
-    fields.DecimalField,
-    fields.IntegerField,
-    fields.DateTimeField,
-    fields.DateField,
-    fields.TimeField,
+FIELDS = [
+    'BooleanField',
+    'CharField',
+    'ChoiceField',
+    'DateField',
+    'DateTimeField',
+    'DecimalField',
+    'DurationField',
+    'EmailField',
+    'FileField',
+    'FloatField',
+    'HiddenField',
+    'ImageField',
+    'IntegerField',
+    'IPAddressField',
+    'MultipleChoiceField',
+    'NullBooleanField',
+    'RegexField',
+    'SlugField',
+    'TimeField',
+    'URLField',
+    'UUIDField',
 ]
 
-ALLOW_BLANK_FIELDS = [
-    fields.CharField,
-    fields.RegexField,
-]
 
-
-def get_updated_fields(fields, base_class):
+def get_updated_fields(fields, base_classes):
+    fields = [globals()[i] for i in fields]
     return {
-        field.__name__: type(field.__name__, (base_class, field), {})
+        field.__name__: type(field.__name__, base_classes + (field,), {})
         for field in fields
     }
 
 
-locals().update(get_updated_fields(EMPTY_STRING_FIELDS, EmptyStringFieldMixin))
-locals().update(get_updated_fields(ALLOW_BLANK_FIELDS, AllowBlankFieldMixin))
+locals().update(
+    get_updated_fields(FIELDS, (EmptyStringFieldMixin, AllowBlankNullFieldMixin))
+)
 
 __all__ = [name for name, value in locals().items()
            if inspect.isclass(value) and issubclass(value, fields.Field)]

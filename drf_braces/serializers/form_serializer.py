@@ -100,6 +100,12 @@ class FormSerializerOptions(object):
                 'what is an expected behavior'.format(self.failure_mode)
             )
 
+        # copy all other custom keys
+        for k, v in vars(meta).items():
+            if hasattr(self, k):
+                continue
+            setattr(self, k, v)
+
 
 class FormSerializerMeta(serializers.SerializerMetaclass):
     def __new__(cls, name, bases, attrs):

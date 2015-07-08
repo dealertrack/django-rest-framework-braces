@@ -6,7 +6,7 @@ import six
 from django.utils.translation import gettext as _
 
 from . import _fields as fields
-from .mixins import EmptyStringFieldMixin, ValueAsTextFieldMixin
+from .mixins import ValueAsTextFieldMixin
 
 
 class UnvalidatedField(fields._UnvalidatedField):
@@ -39,7 +39,7 @@ class UTCDateTimeField(fields.DateTimeField):
         super(UTCDateTimeField, self).__init__(*args, **kwargs)
 
 
-class NonValidatingChoiceField(EmptyStringFieldMixin, fields.ChoiceField):
+class NonValidatingChoiceField(fields.ChoiceField):
     """
     ChoiceField subclass that skips the validation of "choices".
     It does apply 'required' validation, and any other validation
