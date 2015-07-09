@@ -44,3 +44,5 @@ docs/_build
 
 # IDEs
 /.idea
+*.ropeproject
+*.swp
