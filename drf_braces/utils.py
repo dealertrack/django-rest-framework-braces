@@ -117,6 +117,17 @@ def initialize_class_using_reference_object(reference_object, klass, **kwargs):
 
 
 def get_class_name_with_new_suffix(klass, existing_suffix, new_suffix):
+    """
+    Generates new name by replacing the existing suffix with a new one.
+
+    Args:
+        klass (type): original class from which new name is generated
+        existing_suffix (str): the suffix which needs to remain where it is
+        new_suffix (str): the new suffix desired
+
+    Returns:
+        new_name (str): the name with the new suffix
+    """
     class_name = klass.__name__
 
     if existing_suffix in class_name:
@@ -130,6 +141,23 @@ def get_class_name_with_new_suffix(klass, existing_suffix, new_suffix):
 
 
 def get_attr_from_base_classes(bases, attrs, attr, **kwargs):
+    """
+    The base class attributes are retrieved if they are not already
+    present on the object.
+
+    Args:
+        bases (tuple, list): The base classes for a class
+        attrs (dict): The attributes of the class
+        attr (str): Specific attribute being looked for
+
+    Returns:
+        attribute value (str) or a default which is expected.
+
+    Raises:
+        AttributeError: When the attribute is not present anywhere in the
+            call chain hierarchy specified through bases and the attributes
+            of the class itself
+    """
     if attr in attrs:
         return attrs[attr]
 
