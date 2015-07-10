@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.3 (2015-07-10)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed bugs in ``AllowBlankNullFieldMixin``
+* All DRF fields not subclass both ``AllowBlankNullFieldMixin`` and ``EmptyStringFieldMixin``
+
 0.1.2 (2015-07-02)
 ~~~~~~~~~~~~~~~~~~
 
