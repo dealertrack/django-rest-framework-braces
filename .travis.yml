@@ -21,6 +21,4 @@ install:
 # command to run tests, e.g. python setup.py test
 script: make check
 
-sudo: required
-
 after_success: coveralls
