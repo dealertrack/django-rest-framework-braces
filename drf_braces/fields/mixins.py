@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals
 
 import six
-from rest_framework.fields import empty
+from rest_framework.fields import CharField, empty
 
 
 class EmptyStringFieldMixin(object):
@@ -20,12 +20,20 @@ class EmptyStringFieldMixin(object):
         return super(EmptyStringFieldMixin, self).to_representation(value)
 
 
-class AllowBlankFieldMixin(object):
+class AllowBlankNullFieldMixin(object):
     def __init__(self, *args, **kwargs):
-        if not kwargs.get('required', True):
-            kwargs.setdefault('allow_blank', True)
-            kwargs.setdefault('allow_null', True)
-        super(AllowBlankFieldMixin, self).__init__(*args, **kwargs)
+        super(AllowBlankNullFieldMixin, self).__init__(*args, **kwargs)
+
+        # some DRF fields explicitly do not allow some kwargs
+        # therefore we adjust the field attributes directly
+        if not self.required:
+            if all([isinstance(self, CharField),
+                    hasattr(self, 'allow_blank'),
+                    'allow_blank' not in kwargs]):
+                self.allow_blank = True
+            if all([hasattr(self, 'allow_null'),
+                    'allow_null' not in kwargs]):
+                self.allow_null = True
 
 
 class ValueAsTextFieldMixin(object):

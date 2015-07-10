@@ -96,14 +96,15 @@ class TestUtils(unittest.TestCase):
 
 class TestFormSerializerOptions(unittest.TestCase):
     def test_init(self):
-        meta = mock.Mock(failure_mode='fail')
+        meta = mock.Mock(failure_mode='fail', foo='bar')
 
         options = FormSerializerOptions(meta, 'foo')
 
         self.assertEqual(options.form, meta.form)
         self.assertEqual(options.failure_mode, 'fail')
         self.assertEqual(options.minimum_required, meta.minimum_required)
-        self.assertEqual(options.field_mapping, options.field_mapping)
+        self.assertEqual(options.field_mapping, meta.field_mapping)
+        self.assertEqual(options.foo, meta.foo)
 
     def test_init_invalid(self):
         with self.assertRaises(AssertionError):

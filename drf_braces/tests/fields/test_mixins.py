@@ -5,7 +5,7 @@ import mock
 from rest_framework import fields
 
 from drf_braces.fields.mixins import (
-    AllowBlankFieldMixin,
+    AllowBlankNullFieldMixin,
     EmptyStringFieldMixin,
     ValueAsTextFieldMixin,
 )
@@ -57,7 +57,7 @@ class TestAllowBlankFieldMixin(unittest.TestCase):
     def setUp(self):
         super(TestAllowBlankFieldMixin, self).setUp()
 
-        class Field(AllowBlankFieldMixin, fields.CharField):
+        class Field(AllowBlankNullFieldMixin, fields.CharField):
             pass
 
         self.field_class = Field

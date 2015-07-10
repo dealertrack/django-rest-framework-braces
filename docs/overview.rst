@@ -120,5 +120,5 @@ Some fields:
 and mixins:
 
 * :obj:`EmptyStringFieldMixin <drf_braces.fields.mixins.EmptyStringFieldMixin>`
-* :obj:`AllowBlankFieldMixin <drf_braces.fields.mixins.AllowBlankFieldMixin>`
+* :obj:`AllowBlankNullFieldMixin <drf_braces.fields.mixins.AllowBlankNullFieldMixin>`
 * :obj:`ValueAsTextFieldMixin <drf_braces.fields.mixins.ValueAsTextFieldMixin>`
