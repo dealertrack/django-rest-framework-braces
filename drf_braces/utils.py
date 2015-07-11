@@ -125,6 +125,10 @@ def get_class_name_with_new_suffix(klass, existing_suffix, new_suffix):
         existing_suffix (str): the suffix which needs to remain where it is
         new_suffix (str): the new suffix desired
 
+    Example:
+        >>> get_class_name_with_new_suffix(FooForm, 'Form', 'NewForm')
+        'FooNewForm'
+
     Returns:
         new_name (str): the name with the new suffix
     """
@@ -140,18 +144,21 @@ def get_class_name_with_new_suffix(klass, existing_suffix, new_suffix):
     return new_name
 
 
-def get_attr_from_base_classes(bases, attrs, attr, **kwargs):
+def get_attr_from_base_classes(bases, attrs, attr, default=None):
     """
-    The base class attributes are retrieved if they are not already
+    The attribute is retrieved from the base classes if they are not already
     present on the object.
 
     Args:
-        bases (tuple, list): The base classes for a class
-        attrs (dict): The attributes of the class
-        attr (str): Specific attribute being looked for
+        bases (tuple, list): The base classes for a class.
+        attrs (dict): The attributes of the class.
+        attr (str): Specific attribute being looked for.
+        default (any): Whatever default value is expected if the
+            attr is not found.
 
     Returns:
-        attribute value (str) or a default which is expected.
+        attribute value as found in base classes or a default when attribute
+        is not found and default is provided.
 
     Raises:
         AttributeError: When the attribute is not present anywhere in the
@@ -167,8 +174,8 @@ def get_attr_from_base_classes(bases, attrs, attr, **kwargs):
         except AttributeError:
             continue
 
-    if 'default' in kwargs:
-        return kwargs['default']
+    if default:
+        return default
 
     raise AttributeError(
         'None of the bases have {} attribute'
