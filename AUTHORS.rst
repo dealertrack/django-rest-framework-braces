@@ -11,3 +11,4 @@ Contributors
 ~~~~~~~~~~~~
 
 * Khaled Porlin - https://github.com/porlin72
+* Agam Dua - https://github.com/agamdua
