@@ -174,7 +174,7 @@ def get_attr_from_base_classes(bases, attrs, attr, default=None):
         except AttributeError:
             continue
 
-    if default:
+    if default is not None:
         return default
 
     raise AttributeError(
