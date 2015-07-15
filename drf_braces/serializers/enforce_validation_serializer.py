@@ -2,11 +2,12 @@ from __future__ import print_function, unicode_literals
 import inspect
 
 from rest_framework import fields, serializers
+from rest_framework.fields import empty
 
 from ..utils import add_base_class_to_instance, get_class_name_with_new_suffix
 
 
-class EnforceValidationFieldMixin(fields.Field):
+class EnforceValidationFieldMixin(object):
     """
     Custom DRF field mixin which allows to ignore validation error
     if the field is not mandatory.
@@ -17,9 +18,9 @@ class EnforceValidationFieldMixin(fields.Field):
     fields in that serializer are mandatory and must validate.
     """
 
-    def to_internal_value(self, data):
+    def run_validation(self, data=empty):
         try:
-            return super(EnforceValidationFieldMixin, self).to_internal_value(data)
+            return super(EnforceValidationFieldMixin, self).run_validation(data)
         except serializers.ValidationError:
             must_validate_fields = getattr(self.parent, 'must_validate_fields', None)
             field_name = getattr(self, 'field_name')
@@ -30,7 +31,10 @@ class EnforceValidationFieldMixin(fields.Field):
             if must_validate_fields is None or field_name in must_validate_fields:
                 raise
             else:
-                raise fields.SkipField
+                raise fields.SkipField(
+                    'This field "{}" is being skipped as per enforce validation logic.'
+                    ''.format(field_name)
+                )
 
 
 def _create_enforce_validation_serializer(serializer, strict_mode_by_default=True):

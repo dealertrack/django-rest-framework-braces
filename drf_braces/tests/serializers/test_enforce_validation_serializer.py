@@ -35,36 +35,36 @@ class TestEnforceValidationFieldMixin(unittest.TestCase):
     class Field(EnforceValidationFieldMixin, fields.IntegerField):
         pass
 
-    def test_field_from_native_must_validate(self):
+    def test_run_validation_must_validate(self):
         field = self.Field()
         field.field_name = 'field'
         field.parent = mock.MagicMock(must_validate_fields=None)
 
-        self.assertEqual(field.to_internal_value('5'), 5)
+        self.assertEqual(field.run_validation('5'), 5)
 
-    def test_field_from_native_must_validate_all(self):
+    def test_run_validation_must_validate_all(self):
         field = self.Field()
         field.field_name = 'field'
         field.parent = mock.MagicMock(must_validate_fields=None)
 
         with self.assertRaises(serializers.ValidationError):
-            field.to_internal_value('hello')
+            field.run_validation('hello')
 
-    def test_field_from_native_must_validate_invalid(self):
+    def test_run_validation_must_validate_invalid(self):
         field = self.Field()
         field.field_name = 'field'
         field.parent = mock.MagicMock(must_validate_fields=['field'])
 
         with self.assertRaises(serializers.ValidationError):
-            field.to_internal_value('hello')
+            field.run_validation('hello')
 
-    def test_field_from_native_must_validate_ignore(self):
+    def test_run_validation_must_validate_ignore(self):
         field = self.Field()
         field.field_name = 'field'
         field.parent = mock.MagicMock(must_validate_fields=[])
 
         with self.assertRaises(serializers.SkipField):
-            field.to_internal_value('hello')
+            field.run_validation('hello')
 
 
 class TestUtils(unittest.TestCase):

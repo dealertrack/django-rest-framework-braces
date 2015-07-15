@@ -2,7 +2,10 @@ from __future__ import print_function, unicode_literals
 import unittest
 
 from drf_braces.fields import _fields
-from drf_braces.fields.mixins import AllowBlankNullFieldMixin, EmptyStringFieldMixin
+from drf_braces.fields.mixins import (
+    AllowBlankNullFieldMixin,
+    EmptyStringFieldMixin,
+)
 
 
 class TestFields(unittest.TestCase):
