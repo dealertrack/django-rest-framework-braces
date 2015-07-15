@@ -1,12 +1,14 @@
 from __future__ import print_function, unicode_literals
-
 import unittest
 
-from drf_braces.utils import (
-    get_class_name_with_new_suffix,
-    get_attr_from_base_classes,
-)
 from rest_framework import fields
+
+from drf_braces.utils import (
+    find_class_args,
+    find_function_args,
+    get_attr_from_base_classes,
+    get_class_name_with_new_suffix,
+)
 
 
 class TestUtils(unittest.TestCase):
@@ -48,3 +50,24 @@ class TestUtils(unittest.TestCase):
             get_attr_from_base_classes(
                 (Parent,), {'fields': 'mushrooms'}, 'catchmeifyoucan'
             )
+
+    def test_find_function_args(self):
+        def foo(a, b, c):
+            pass
+
+        self.assertListEqual(find_function_args(foo), ['a', 'b', 'c'])
+
+    def test_find_function_args_invalid(self):
+        self.assertListEqual(find_function_args(None), [])
+
+    def test_find_class_args(self):
+        class Bar(object):
+            def __init__(self, a, b):
+                pass
+
+        class Foo(Bar):
+            def __init__(self, c, d):
+                super(Foo, self).__init__(None, None)
+                pass
+
+        self.assertSetEqual(set(find_class_args(Foo)), {'a', 'b', 'c', 'd'})
