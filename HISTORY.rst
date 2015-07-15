@@ -3,6 +3,11 @@
 History
 -------
 
+0.1.5 (2015-07-15)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a bug in ``EnforceValidationFieldMixin`` that it was overwriting ``to_internal_value`` instead of ``run_validation``
+
 0.1.4 (2015-07-13)
 ~~~~~~~~~~~~~~~~~~
 
