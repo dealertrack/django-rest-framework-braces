@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.6 (2016-02-29)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed a bug in ``SerializerForm`` in which form cleaned data was replaced with serializer data
+  instead of updating it.
+
 0.1.5 (2015-07-15)
 ~~~~~~~~~~~~~~~~~~
 
