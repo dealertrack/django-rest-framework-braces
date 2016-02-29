@@ -27,8 +27,14 @@ class DecimalField(fields.DecimalField):
 class DateTimeField(fields.DateTimeField):
     def __init__(self, *args, **kwargs):
         super(DateTimeField, self).__init__(*args, **kwargs)
+        # allow fo the case when default_timezone is passed as None
+        # since super will in that use Django's default timezone
         if 'default_timezone' in kwargs:
-            self.default_timezone = kwargs['default_timezone']
+            # DRF >= 3.3
+            if callable(self.default_timezone):
+                self.timezone = kwargs['default_timezone']
+            else:
+                self.default_timezone = kwargs['default_timezone']
 
 
 __all__ = [name for name, value in locals().items()
