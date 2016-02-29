@@ -134,7 +134,7 @@ class SerializerFormBase(forms.Form):
         if not self.serializer.is_valid():
             self._errors.update(self.serializer.errors)
         else:
-            self.cleaned_data = self.serializer.validated_data
+            self.cleaned_data.update(self.serializer.validated_data)
 
 
 class SerializerForm(six.with_metaclass(SerializerFormMeta, SerializerFormBase)):
