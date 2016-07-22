@@ -3,6 +3,7 @@ import unittest
 from decimal import Decimal
 
 import pytz
+from django.test.utils import override_settings
 
 from drf_braces.fields.modified import BooleanField, DateTimeField, DecimalField
 
@@ -31,9 +32,9 @@ class TestDecimalField(unittest.TestCase):
 
 
 class TestDateTimeField(unittest.TestCase):
+    @override_settings(USE_TZ=True)
     def test_init(self):
-        field = DateTimeField()
-        self.assertIsNone(field.default_timezone)
+        value = '2015-01-02T16:00'
 
-        field = DateTimeField(default_timezone=pytz.utc)
-        self.assertEqual(field.default_timezone, pytz.utc)
+        self.assertIsNotNone(DateTimeField(default_timezone=pytz.utc).run_validation(value).tzinfo)
+        self.assertIsNone(DateTimeField(default_timezone=None).run_validation(value).tzinfo)

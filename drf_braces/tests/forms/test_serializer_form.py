@@ -178,12 +178,20 @@ class TestSerializerFormBase(unittest.TestCase):
 
     @mock.patch.object(SerializerFormBase, 'get_serializer')
     def test_clean_form_valid(self, mock_get_serializer):
-        form = SerializerFormBase(data={})
+        class TestForm(SerializerFormBase):
+            hello = forms.CharField()
+
+        form = TestForm(data={'hello': 'world'})
         mock_get_serializer.return_value.is_valid.return_value = True
+        mock_get_serializer.return_value.validated_data = {
+            'and': 'mars'
+        }
 
         self.assertTrue(form.is_valid(), form.errors)
-
-        self.assertEqual(form.cleaned_data, mock_get_serializer.return_value.validated_data)
+        self.assertEqual(form.cleaned_data, {
+            'hello': 'world',
+            'and': 'mars',
+        })
 
     @mock.patch.object(SerializerFormBase, 'get_serializer')
     def test_clean_form_invalid(self, mock_get_serializer):

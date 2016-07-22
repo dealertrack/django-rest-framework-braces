@@ -38,7 +38,10 @@ class TestUTCDateTimeField(unittest.TestCase):
     def test_init(self):
         field = UTCDateTimeField()
 
-        self.assertEqual(field.default_timezone, pytz.UTC)
+        self.assertEqual(
+            getattr(field, 'timezone', getattr(field, 'default_timezone', None)),
+            pytz.UTC
+        )
 
 
 class TestNonValidatingChoiceField(unittest.TestCase):
