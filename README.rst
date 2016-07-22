@@ -12,7 +12,7 @@ Collection of utilities for working with DRF. Name inspired by `django-braces <h
 
 * Free software: MIT license
 * GitHub: https://github.com/dealertrack/django-rest-framework-braces
-* Documentation: https://django-rest-framework-braces.readthedocs.org.
+* Documentation: https://django-rest-framework-braces.readthedocs.io.
 
 Installing
 ----------
@@ -34,7 +34,7 @@ For example::
             serializer = self.get_serializer(serializer_class=MySerializer)
             ...
 
-For full list of available utilities, please refer to the `documentation <https://django-rest-framework-braces.readthedocs.org>`_.
+For full list of available utilities, please refer to the `documentation <https://django-rest-framework-braces.readthedocs.io>`_.
 
 Testing
 -------
