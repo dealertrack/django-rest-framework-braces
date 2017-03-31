@@ -23,6 +23,7 @@ SERIALIZER_FORM_FIELD_MAPPING = {
     fields.IntegerField: forms.IntegerField,
     fields.UUIDField: forms.UUIDField,
     fields.URLField: forms.URLField,
+    fields.DateField: forms.DateField,
     serializers.BooleanField: forms.BooleanField,
     serializers.CharField: forms.CharField,
     serializers.ChoiceField: forms.ChoiceField,
@@ -30,7 +31,8 @@ SERIALIZER_FORM_FIELD_MAPPING = {
     serializers.EmailField: forms.EmailField,
     serializers.IntegerField: forms.IntegerField,
     serializers.UUIDField: forms.UUIDField,
-    serializers.URLField: forms.URLField
+    serializers.URLField: forms.URLField,
+    serializers.DateField: forms.DateField,
 }
 
 
