@@ -67,8 +67,6 @@ class TestCurrencyField(unittest.TestCase):
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
-        import ipdb
-        ipdb.set_trace()
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
         self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
