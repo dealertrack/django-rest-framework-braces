@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 import inspect
 
+from decimal import Decimal
 import pytz
 import six
 from django.utils.translation import gettext as _
@@ -81,7 +82,7 @@ class RoundedDecimalField(fields.DecimalField):
         )
 
     def quantize(self, data):
-        return round(data, self.decimal_places)
+        return data.quantize(Decimal('1') / Decimal(10 ** self.decimal_places))
 
     def validate_precision(self, data):
         return

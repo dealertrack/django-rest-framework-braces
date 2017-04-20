@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 import unittest
 from collections import OrderedDict
+from decimal import Decimal
 
 import mock
 import pytz
@@ -66,6 +67,6 @@ class TestCurrencyField(unittest.TestCase):
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
-        self.assertEqual(field.quantize(5.2345), 5.23)
-        self.assertEqual(field.quantize(5.2356), 5.24)
-        self.assertEqual(field.quantize(4.2399), 4.24)
+        self.assertEqual(field.quantize(Decimal('5.2345')), Decimal('5.23'))
+        self.assertEqual(field.quantize(Decimal('5.2356')), Decimal('5.24'))
+        self.assertEqual(field.quantize(Decimal('4.2399')), Decimal('4.24'))
