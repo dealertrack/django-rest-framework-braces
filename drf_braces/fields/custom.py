@@ -74,7 +74,7 @@ class RoundedDecimalField(fields.DecimalField):
     to two decimal places.
     """
 
-    def __init__(self, max_digits=None, decimal_places=2, *args, **kwargs):
+    def __init__(self, max_digits=100, decimal_places=2, *args, **kwargs):
         super(fields.DecimalField, self).__init__(
             max_digits=max_digits,
             decimal_places=decimal_places,
@@ -83,18 +83,6 @@ class RoundedDecimalField(fields.DecimalField):
 
     def to_internal_value(self, data):
         return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))
-
-    def quantize(self, data):
-        if self.decimal_places is None:
-            return data
-
-        context = getcontext().copy()
-        if self.max_digits is not None:
-            context.prec = self.max_digits
-        return data.quantize(
-            Decimal('.1') ** self.decimal_places,
-            context=context
-        )
 
     def validate_precision(self, data):
         return data
