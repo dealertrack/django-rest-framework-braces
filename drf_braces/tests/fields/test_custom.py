@@ -8,6 +8,7 @@ import pytz
 from drf_braces.fields.custom import (
     NonValidatingChoiceField,
     PositiveIntegerField,
+    RoundedDecimalField,
     UTCDateTimeField,
     UnvalidatedField,
 )
@@ -55,3 +56,16 @@ class TestNonValidatingChoiceField(unittest.TestCase):
 
         self.assertEqual(field.to_internal_value('bar'), 'bar')
         self.assertEqual(field.to_internal_value('haha'), 'haha')
+
+
+class TestCurrencyField(unittest.TestCase):
+    def test_init(self):
+        field = RoundedDecimalField()
+        self.assertIsNone(field.max_digits)
+        self.assertEqual(field.decimal_places, 2)
+
+    def test_to_internal_value(self):
+        field = RoundedDecimalField()
+        self.assertEqual(field.quantize(5.2345), 5.23)
+        self.assertEqual(field.quantize(5.2356), 5.24)
+        self.assertEqual(field.quantize(4.2399), 4.24)

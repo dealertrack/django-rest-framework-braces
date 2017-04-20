@@ -65,3 +65,23 @@ class NumericField(ValueAsTextFieldMixin, fields.IntegerField):
 
 __all__ = [name for name, value in locals().items()
            if inspect.isclass(value) and issubclass(value, fields.Field)]
+
+
+class RoundedDecimalField(fields.DecimalField):
+    """
+    Currency field subclass of Decimal used for rounding currencies
+    to two decimal places.
+    """
+
+    def __init__(self, max_digits=None, decimal_places=2, *args, **kwargs):
+        super(fields.DecimalField, self).__init__(
+            max_digits=max_digits,
+            decimal_places=decimal_places,
+            *args, **kwargs
+        )
+
+    def quantize(self, data):
+        return round(data, self.decimal_places)
+
+    def validate_precision(self, data):
+        return

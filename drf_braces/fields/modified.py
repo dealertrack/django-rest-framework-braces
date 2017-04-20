@@ -24,24 +24,6 @@ class DecimalField(fields.DecimalField):
         return super(DecimalField, self).quantize(value)
 
 
-class CurrencyField(DecimalField):
-    """
-    Currency field subclass of Decimal used for rounding currencies
-    to two decimal places.
-    """
-    precision = 2
-
-    def __init__(self, max_digits=None, *args, **kwargs):
-        super(DecimalField, self).__init__(
-            max_digits=max_digits,
-            decimal_places=None,
-            *args, **kwargs
-        )
-
-    def to_internal_value(self, data):
-        return round(data, self.precision)
-
-
 class DateTimeField(fields.DateTimeField):
     def __init__(self, *args, **kwargs):
         super(DateTimeField, self).__init__(*args, **kwargs)
