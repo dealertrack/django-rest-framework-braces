@@ -1,7 +1,6 @@
 from __future__ import print_function, unicode_literals
 import inspect
 
-from decimal import Decimal, getcontext
 import pytz
 import six
 from django.utils.translation import gettext as _
