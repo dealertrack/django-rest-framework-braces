@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals
 import inspect
 
-from decimal import Decimal
+from decimal import Decimal, getcontext
 import pytz
 import six
 from django.utils.translation import gettext as _
@@ -81,8 +81,20 @@ class RoundedDecimalField(fields.DecimalField):
             *args, **kwargs
         )
 
+    def to_internal_value(self, data):
+        return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))
+
     def quantize(self, data):
-        return data.quantize(Decimal('1') / Decimal(10 ** self.decimal_places))
+        if self.decimal_places is None:
+            return data
+
+        context = getcontext().copy()
+        if self.max_digits is not None:
+            context.prec = self.max_digits
+        return data.quantize(
+            Decimal('.1') ** self.decimal_places,
+            context=context
+        )
 
     def validate_precision(self, data):
-        return
+        return data
