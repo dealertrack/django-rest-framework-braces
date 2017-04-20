@@ -5,7 +5,7 @@ from decimal import Decimal
 import pytz
 from django.test.utils import override_settings
 
-from drf_braces.fields.modified import BooleanField, DateTimeField, DecimalField
+from drf_braces.fields.modified import BooleanField, CurrencyField, DateTimeField, DecimalField
 
 
 class TestBooleanField(unittest.TestCase):
@@ -29,6 +29,18 @@ class TestDecimalField(unittest.TestCase):
 
         field = DecimalField(max_digits=4, decimal_places=3)
         self.assertEqual(field.quantize(Decimal('5.1234567')), Decimal('5.123'))
+
+
+class TestCurrencyField(unittest.TestCase):
+    def test_init(self):
+        field = CurrencyField()
+        self.assertIsNone(field.max_digits)
+
+    def test_to_internal_value(self):
+        field = CurrencyField()
+        self.assertEqual(field.to_internal_value(5.2345), 5.23)
+        self.assertEqual(field.to_internal_value(5.2356), 5.24)
+        self.assertEqual(field.to_internal_value(4.2399), 4.24)
 
 
 class TestDateTimeField(unittest.TestCase):
