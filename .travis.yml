@@ -1,13 +1,13 @@
 language: python
 
 python:
-  - "3.5"
+  - "3.6"
   - "2.7"
   - "pypy"
 
 env:
   - "$DJANGO='django<1.9'"
-  - "$DJANGO='django<1.10'"
+  - "$DJANGO='django<2.0'"
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:

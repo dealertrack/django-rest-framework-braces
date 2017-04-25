@@ -3,6 +3,13 @@
 History
 -------
 
+0.2.0 (2017-04-25)
+~~~~~~~~~~~~~~~~~~
+
+* Added ``RoundedDecimalField`` for rounding off decimal to specified ``decimal_places``
+  instead of validing that higher precision is not allowed
+* Added ``URLField`` for automatic mapping between django forms and DRF serializers
+
 0.1.6 (2016-02-29)
 ~~~~~~~~~~~~~~~~~~
 
