@@ -26,6 +26,7 @@ class TestDecimalField(unittest.TestCase):
     def test_quantize(self):
         field = DecimalField()
         self.assertIsNone(field.quantize(None))
+        self.assertEqual(field.quantize(5.123), 5.123)
 
         field = DecimalField(max_digits=4, decimal_places=3)
         self.assertEqual(field.quantize(Decimal('5.1234567')), Decimal('5.123'))

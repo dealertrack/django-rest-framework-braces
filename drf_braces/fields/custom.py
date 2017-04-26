@@ -80,7 +80,14 @@ class RoundedDecimalField(fields.DecimalField):
             *args, **kwargs
         )
 
+    def quantize(self, data):
+        if isinstance(data, float):
+            return round(data, self.decimal_places)
+        return super(fields.DecimalField, self).quantize(data)
+
     def to_internal_value(self, data):
+        if isinstance(data, float):
+            return self.quantize(data)
         return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))
 
     def validate_precision(self, data):

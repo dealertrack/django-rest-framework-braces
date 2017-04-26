@@ -26,7 +26,6 @@ FIELDS = [
     'MultipleChoiceField',
     'NullBooleanField',
     'RegexField',
-    'RoundedDecimalField',
     'SlugField',
     'TimeField',
     'URLField',

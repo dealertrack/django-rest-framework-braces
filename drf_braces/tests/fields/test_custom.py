@@ -70,3 +70,5 @@ class TestCurrencyField(unittest.TestCase):
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
         self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
+        self.assertEqual(field.to_internal_value(4.2399), 4.24)
+        self.assertEqual(field.to_internal_value(5.2345), 5.23)
