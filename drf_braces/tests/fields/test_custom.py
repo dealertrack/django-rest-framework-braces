@@ -59,16 +59,21 @@ class TestNonValidatingChoiceField(unittest.TestCase):
         self.assertEqual(field.to_internal_value('haha'), 'haha')
 
 
-class TestCurrencyField(unittest.TestCase):
+class TestRoundedField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
-        self.assertIsNotNone(field.max_digits)
+        self.assertIsNone(field.max_digits)
         self.assertEqual(field.decimal_places, 2)
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
-        self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
-        self.assertEqual(field.to_internal_value(4.2399), 4.24)
-        self.assertEqual(field.to_internal_value(5.2345), 5.23)
+        self.assertEqual(field.to_internal_value(4.2399), Decimal('4.24'))
+
+    def test_quantize(self):
+        field = RoundedDecimalField()
+        self.assertEqual(field.quantize(Decimal('5.2356')), Decimal('5.24'))
+        self.assertEqual(field.quantize(Decimal('4.2399')), Decimal('4.24'))
+        self.assertEqual(field.quantize(4.2399), 4.24)
+        self.assertEqual(field.quantize(5.2345), 5.23)
