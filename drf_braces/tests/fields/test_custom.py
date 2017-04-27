@@ -6,7 +6,7 @@ from decimal import Decimal
 import mock
 import pytz
 
-from drf_braces.fields.custom import (
+from drf_braces.fields import (
     NonValidatingChoiceField,
     PositiveIntegerField,
     RoundedDecimalField,
@@ -59,7 +59,7 @@ class TestNonValidatingChoiceField(unittest.TestCase):
         self.assertEqual(field.to_internal_value('haha'), 'haha')
 
 
-class TestCurrencyField(unittest.TestCase):
+class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
         self.assertIsNotNone(field.max_digits)
@@ -67,6 +67,19 @@ class TestCurrencyField(unittest.TestCase):
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
+        self.assertEqual(field.to_internal_value(5), Decimal('5'))
+        self.assertEqual(field.to_internal_value(5.2), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value(5.23), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value(5.2345), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value(5.2356), Decimal('5.24'))
+        self.assertEqual(field.to_internal_value('5'), Decimal('5'))
+        self.assertEqual(field.to_internal_value('5.2'), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value('5.23'), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value('5.2345'), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value('5.2356'), Decimal('5.24'))
+        self.assertEqual(field.to_internal_value(Decimal('5')), Decimal('5'))
+        self.assertEqual(field.to_internal_value(Decimal('5.2')), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value(Decimal('5.23')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
         self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
