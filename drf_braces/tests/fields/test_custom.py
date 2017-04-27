@@ -6,7 +6,7 @@ from decimal import Decimal
 import mock
 import pytz
 
-from drf_braces.fields import (
+from drf_braces.fields.custom import (
     NonValidatingChoiceField,
     PositiveIntegerField,
     RoundedDecimalField,
