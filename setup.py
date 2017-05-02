@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
 import os
+
 from setuptools import find_packages, setup
 
 from drf_braces import __author__, __version__

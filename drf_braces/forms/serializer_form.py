@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import inspect
-import six
 
+import six
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass
 from rest_framework import serializers
