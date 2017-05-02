@@ -1,10 +1,10 @@
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
+import pytz
 import unittest
 from collections import OrderedDict
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 
 import mock
-import pytz
 
 from drf_braces.fields.custom import (
     NonValidatingChoiceField,
@@ -59,21 +59,33 @@ class TestNonValidatingChoiceField(unittest.TestCase):
         self.assertEqual(field.to_internal_value('haha'), 'haha')
 
 
-class TestRoundedField(unittest.TestCase):
+class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
-        self.assertIsNone(field.max_digits)
+        self.assertIsNotNone(field.max_digits)
         self.assertEqual(field.decimal_places, 2)
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
+        self.assertEqual(field.to_internal_value(5), Decimal('5'))
+        self.assertEqual(field.to_internal_value(5.2), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value(5.23), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value(5.2345), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value(5.2356), Decimal('5.24'))
+        self.assertEqual(field.to_internal_value('5'), Decimal('5'))
+        self.assertEqual(field.to_internal_value('5.2'), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value('5.23'), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value('5.2345'), Decimal('5.23'))
+        self.assertEqual(field.to_internal_value('5.2356'), Decimal('5.24'))
+        self.assertEqual(field.to_internal_value(Decimal('5')), Decimal('5'))
+        self.assertEqual(field.to_internal_value(Decimal('5.2')), Decimal('5.2'))
+        self.assertEqual(field.to_internal_value(Decimal('5.23')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
-        self.assertEqual(field.to_internal_value(4.2399), Decimal('4.24'))
+        self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
 
-    def test_quantize(self):
-        field = RoundedDecimalField()
-        self.assertEqual(field.quantize(Decimal('5.2356')), Decimal('5.24'))
-        self.assertEqual(field.quantize(Decimal('4.2399')), Decimal('4.24'))
-        self.assertEqual(field.quantize(4.2399), 4.24)
-        self.assertEqual(field.quantize(5.2345), 5.23)
+        floored_field = RoundedDecimalField(rounding=ROUND_DOWN)
+        self.assertEqual(floored_field.to_internal_value(5.2345), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(5.2356), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(Decimal('5.2356')), Decimal('5.23'))

@@ -52,11 +52,9 @@ test:
 	python tests/manage.py test ${TEST_FLAGS}
 
 test-coverage: clean-test
-	-coverage run ${COVER_FLAGS} tests/manage.py test ${TEST_FLAGS}
-	@exit_code=$?
-	@-coverage report -m
-	@-coverage html
-	@exit ${exit_code}
+	coverage run ${COVER_FLAGS} tests/manage.py test ${TEST_FLAGS}
+	coverage report -m
+	coverage html
 
 test-all:
 	tox

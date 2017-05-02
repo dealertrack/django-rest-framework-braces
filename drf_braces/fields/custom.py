@@ -1,8 +1,9 @@
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 import inspect
-
 import pytz
 import six
+from decimal import Decimal, getcontext
+
 from django.utils.translation import gettext as _
 
 from . import _fields as fields
@@ -63,10 +64,6 @@ class NumericField(ValueAsTextFieldMixin, fields.IntegerField):
     }
 
 
-__all__ = [name for name, value in locals().items()
-           if inspect.isclass(value) and issubclass(value, fields.Field)]
-
-
 class RoundedDecimalField(fields.DecimalField):
     """
     Currency field subclass of Decimal used for rounding currencies
@@ -74,17 +71,61 @@ class RoundedDecimalField(fields.DecimalField):
     """
 
     def __init__(self, max_digits=None, decimal_places=2, *args, **kwargs):
+        max_digits = max_digits or self.MAX_STRING_LENGTH
         super(RoundedDecimalField, self).__init__(
             max_digits=max_digits,
             decimal_places=decimal_places,
             *args, **kwargs
         )
 
-    def quantize(self, value):
-        if self.max_digits is None and isinstance(value, float):
-            return round(value, self.decimal_places)
-
-        return super(RoundedDecimalField, self).quantize(value)
+    def to_internal_value(self, data):
+        return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))
 
     def validate_precision(self, data):
         return data
+
+
+class RoundedDecimalField(fields.DecimalField):
+    """
+    Currency field subclass of Decimal used for rounding currencies
+    to two decimal places.
+    """
+    rounding = None
+
+    def __init__(self, max_digits=None, decimal_places=2, rounding=None, *args, **kwargs):
+        max_digits = max_digits or self.MAX_STRING_LENGTH
+
+        self.rounding = rounding
+
+        super(RoundedDecimalField, self).__init__(
+            max_digits=max_digits,
+            decimal_places=decimal_places,
+            *args, **kwargs
+        )
+
+    def to_internal_value(self, data):
+        return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))
+
+    def validate_precision(self, data):
+        return data
+
+    def quantize(self, data):
+        """
+        Quantize the decimal value to the configured precision.
+        """
+        if self.decimal_places is None:
+            return value
+
+        context = getcontext().copy()
+
+        if self.max_digits is not None:
+            context.prec = self.max_digits
+        if self.rounding is not None:
+            context.rounding = self.rounding
+        return data.quantize(
+            Decimal('.1') ** self.decimal_places,
+            context=context
+        )
+
+__all__ = [name for name, value in locals().items()
+           if inspect.isclass(value) and issubclass(value, fields.Field)]

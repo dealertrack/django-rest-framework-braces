@@ -1,9 +1,9 @@
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
+import six
 import unittest
 from datetime import datetime
 
 import mock
-import six
 from django import forms
 from rest_framework import serializers
 

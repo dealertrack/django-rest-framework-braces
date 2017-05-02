@@ -1,8 +1,8 @@
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 import json
+import six
 from collections import OrderedDict
 
-import six
 from django.conf import settings
 from rest_framework import parsers
 
