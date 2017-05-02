@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import six
 from collections import OrderedDict
 
+import six
 from django import forms
 from rest_framework import serializers
 
