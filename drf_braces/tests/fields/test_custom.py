@@ -62,7 +62,6 @@ class TestNonValidatingChoiceField(unittest.TestCase):
 class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
-        self.assertIsNotNone(field.max_digits)
         self.assertEqual(field.decimal_places, 2)
 
     def test_to_internal_value(self):
