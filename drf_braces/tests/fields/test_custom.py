@@ -63,6 +63,7 @@ class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
         self.assertEqual(field.decimal_places, 2)
+        self.assertEqual(field.rounding, None)
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
