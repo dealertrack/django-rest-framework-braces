@@ -63,7 +63,7 @@ class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
         self.assertEqual(field.decimal_places, 2)
-        self.assertEqual(field.rounding, None)
+        self.assertIsNone(field.rounding)
 
         new_field = RoundedDecimalField(rounding=ROUND_DOWN)
         self.assertEqual(new_field.rounding, ROUND_DOWN)
