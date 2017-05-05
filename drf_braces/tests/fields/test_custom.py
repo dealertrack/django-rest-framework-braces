@@ -65,6 +65,9 @@ class TestRoundedDecimalField(unittest.TestCase):
         self.assertEqual(field.decimal_places, 2)
         self.assertEqual(field.rounding, None)
 
+        new_field = RoundedDecimalField(rounding=ROUND_DOWN)
+        self.assertEqual(new_field.rounding, ROUND_DOWN)
+
     def test_to_internal_value(self):
         field = RoundedDecimalField()
         self.assertEqual(field.to_internal_value(5), Decimal('5'))
