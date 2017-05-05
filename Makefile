@@ -46,7 +46,8 @@ clean-test-all: clean-test
 	rm -rf .tox/
 
 lint:
-	flake8 drf_braces
+	flake8 drf_braces tests
+	importanize drf_braces tests --ci
 
 test:
 	python tests/manage.py test ${TEST_FLAGS}
