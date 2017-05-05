@@ -2,6 +2,7 @@
 coverage
 django-extensions
 flake8
+importanize
 mock
 Sphinx
 sphinx-autobuild
