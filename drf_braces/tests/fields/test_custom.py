@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import unittest
 from collections import OrderedDict
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 
 import mock
 import pytz
@@ -62,8 +62,11 @@ class TestNonValidatingChoiceField(unittest.TestCase):
 class TestRoundedDecimalField(unittest.TestCase):
     def test_init(self):
         field = RoundedDecimalField()
-        self.assertIsNotNone(field.max_digits)
         self.assertEqual(field.decimal_places, 2)
+        self.assertIsNone(field.rounding)
+
+        new_field = RoundedDecimalField(rounding=ROUND_DOWN)
+        self.assertEqual(new_field.rounding, ROUND_DOWN)
 
     def test_to_internal_value(self):
         field = RoundedDecimalField()
@@ -83,3 +86,9 @@ class TestRoundedDecimalField(unittest.TestCase):
         self.assertEqual(field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
         self.assertEqual(field.to_internal_value(Decimal('5.2356')), Decimal('5.24'))
         self.assertEqual(field.to_internal_value(Decimal('4.2399')), Decimal('4.24'))
+
+        floored_field = RoundedDecimalField(rounding=ROUND_DOWN)
+        self.assertEqual(floored_field.to_internal_value(5.2345), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(5.2356), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(Decimal('5.2345')), Decimal('5.23'))
+        self.assertEqual(floored_field.to_internal_value(Decimal('5.2356')), Decimal('5.23'))

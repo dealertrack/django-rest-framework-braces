@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import inspect
+from decimal import Decimal, getcontext
 
 import pytz
 import six
@@ -69,8 +70,9 @@ class RoundedDecimalField(fields.DecimalField):
     to two decimal places.
     """
 
-    def __init__(self, max_digits=None, decimal_places=2, *args, **kwargs):
-        max_digits = max_digits or self.MAX_STRING_LENGTH
+    def __init__(self, max_digits=None, decimal_places=2, rounding=None, *args, **kwargs):
+        self.rounding = rounding
+
         super(RoundedDecimalField, self).__init__(
             max_digits=max_digits,
             decimal_places=decimal_places,
@@ -82,6 +84,24 @@ class RoundedDecimalField(fields.DecimalField):
 
     def validate_precision(self, data):
         return data
+
+    def quantize(self, data):
+        """
+        Quantize the decimal value to the configured precision.
+        """
+        if self.decimal_places is None:
+            return data
+
+        context = getcontext().copy()
+
+        if self.max_digits is not None:
+            context.prec = self.max_digits
+        if self.rounding is not None:
+            context.rounding = self.rounding
+        return data.quantize(
+            Decimal('.1') ** self.decimal_places,
+            context=context
+        )
 
 
 __all__ = [name for name, value in locals().items()
