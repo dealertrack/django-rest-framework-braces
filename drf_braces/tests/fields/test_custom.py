@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import pytz
 import unittest
 from collections import OrderedDict
 from decimal import ROUND_DOWN, Decimal
 
 import mock
+import pytz
 
 from drf_braces.fields.custom import (
     NonValidatingChoiceField,

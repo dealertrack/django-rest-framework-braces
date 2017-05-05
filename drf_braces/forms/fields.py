@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from dateutil.parser import parse
 
 import six
+from dateutil.parser import parse
 from django import forms
 from rest_framework import ISO_8601
 

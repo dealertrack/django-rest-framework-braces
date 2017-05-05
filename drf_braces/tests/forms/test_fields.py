@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import pytz
 import unittest
 from datetime import datetime
-from dateutil.tz import tzoffset
 
+import pytz
+from dateutil.tz import tzoffset
 from django import forms
 from rest_framework import ISO_8601
 

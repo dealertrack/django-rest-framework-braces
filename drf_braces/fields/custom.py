@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import inspect
-import pytz
 from decimal import Decimal, getcontext
 
+import pytz
 import six
 from django.utils.translation import gettext as _
 
