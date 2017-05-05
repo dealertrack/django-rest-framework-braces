@@ -90,7 +90,7 @@ class RoundedDecimalField(fields.DecimalField):
         Quantize the decimal value to the configured precision.
         """
         if self.decimal_places is None:
-            return value
+            return data
 
         context = getcontext().copy()
 
@@ -102,6 +102,7 @@ class RoundedDecimalField(fields.DecimalField):
             Decimal('.1') ** self.decimal_places,
             context=context
         )
+
 
 __all__ = [name for name, value in locals().items()
            if inspect.isclass(value) and issubclass(value, fields.Field)]
