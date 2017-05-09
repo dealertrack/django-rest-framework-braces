@@ -3,6 +3,11 @@
 History
 -------
 
+0.2.2 (2017-05-09)
+
+* Added ``rounding`` parameter to ``RoundedDecimalField`` which allows to define rounding direction
+  when rounding value.
+
 0.2.1 (2017-04-27)
 ~~~~~~~~~~~~~~~~~~
 
