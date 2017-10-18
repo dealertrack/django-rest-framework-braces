@@ -248,6 +248,10 @@ class FormSerializerBase(serializers.Serializer):
         """
         attrs = find_matching_class_kwargs(form_field, serializer_field_class)
 
+        if 'choices' in attrs:
+            choices = OrderedDict(attrs['choices']).keys()
+            attrs['choices'] = OrderedDict(zip(choices, choices))
+
         if getattr(form_field, 'initial', None):
             attrs['default'] = form_field.initial
 
@@ -323,7 +327,9 @@ class LazyLoadingValidationsMixin(object):
 
         for form_field_name, form_field in instance.fields.items():
             if hasattr(form_field, 'choices'):
-                self.fields[form_field_name].choices = OrderedDict(form_field.choices)
+                # let drf normalize choices down to key: key
+                # key:value is unsupported unlike in django form fields
+                self.fields[form_field_name].choices = OrderedDict(form_field.choices).keys()
                 self.fields[form_field_name].choice_strings_to_values = {
                     six.text_type(key): key for key in OrderedDict(form_field.choices).keys()
                 }

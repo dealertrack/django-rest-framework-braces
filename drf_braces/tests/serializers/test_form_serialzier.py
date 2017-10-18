@@ -235,6 +235,21 @@ class TestFormSerializerBase(unittest.TestCase):
         }, kwargs)
         self.assertNotIn('required', kwargs)
 
+    def test_get_field_kwargs_choice_field(self):
+        serializer = self.serializer_class()
+        form_field = forms.ChoiceField(
+            choices=[('foo', 'FOO'), ('bar', 'BAR')]
+        )
+
+        kwargs = serializer._get_field_kwargs(form_field, fields.ChoiceField)
+
+        self.assertDictContainsSubset({
+            'choices': OrderedDict([
+                ('foo', 'foo'),
+                ('bar', 'bar'),
+            ]),
+        }, kwargs)
+
     def test_validate(self):
         serializer = self.serializer_class(data={
             'foo': 'hello',
@@ -307,8 +322,8 @@ class TestLazyLoadingValidationsMixin(unittest.TestCase):
 
         serializer.repopulate_form_fields()
 
-        self.assertDictEqual(serializer.fields['happy'].choices, {'happy': 'choices'})
-        self.assertDictEqual(serializer.fields['happy'].choice_strings_to_values,
+        self.assertDictEqual(dict(serializer.fields['happy'].choices), {'happy': 'happy'})
+        self.assertDictEqual(dict(serializer.fields['happy'].choice_strings_to_values),
                              {'happy': 'happy'})
 
     @mock.patch.object(serializers.Serializer, 'to_internal_value')

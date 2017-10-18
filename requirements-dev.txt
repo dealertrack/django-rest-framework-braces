@@ -4,6 +4,7 @@ django-extensions
 flake8
 importanize
 mock
+pdbpp
 Sphinx
 sphinx-autobuild
 sphinx-rtd-theme
