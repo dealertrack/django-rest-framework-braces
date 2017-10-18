@@ -3,6 +3,14 @@
 History
 -------
 
+0.2.3 (2017-10-18)
+~~~~~~~~~~~~~~~~~~
+
+* Fixed how choices are normalized in ``SerializerForm`` to ``[(key, key)]``
+  vs previously ``[(key, value)]`` to match DRF's handling of choices unlike Django forms.
+* Added support for ``Form.all_fields`` and ``Form.all_base_fields``
+  in ``SerializerForm`` which supports custom form classes which implement such API.
+
 0.2.2 (2017-05-09)
 ~~~~~~~~~~~~~~~~~~
 
