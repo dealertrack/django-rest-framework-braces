@@ -192,7 +192,8 @@ class FormSerializerBase(serializers.Serializer):
 
         # Iterate over the form fields, creating an
         # instance of serializer field for each.
-        for field_name, form_field in self.Meta.form.base_fields.items():
+        form = self.Meta.form
+        for field_name, form_field in getattr(form, 'all_base_fields', form.base_fields).items():
             # if field is already defined via declared fields
             # skip mapping it from forms which then honors
             # the custom validation defined on the DRF declared field
@@ -325,7 +326,7 @@ class LazyLoadingValidationsMixin(object):
         """
         instance = self.get_form()
 
-        for form_field_name, form_field in instance.fields.items():
+        for form_field_name, form_field in getattr(instance, 'all_fields', instance.fields).items():
             if hasattr(form_field, 'choices'):
                 # let drf normalize choices down to key: key
                 # key:value is unsupported unlike in django form fields
@@ -353,6 +354,6 @@ def set_form_partial_validation(form, minimum_required):
     :param minimum_required: list of minimum required fields
     :return: None
     """
-    for field_name, field in form.fields.items():
+    for field_name, field in getattr(form, 'all_fields', form.fields).items():
         if field_name not in minimum_required:
             field.required = False
