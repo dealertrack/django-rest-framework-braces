@@ -85,6 +85,7 @@ class FormSerializerOptions(object):
         self.failure_mode = getattr(meta, 'failure_mode', FormSerializerFailure.fail)
         self.minimum_required = getattr(meta, 'minimum_required', [])
         self.field_mapping = getattr(meta, 'field_mapping', {})
+        self.exclude = getattr(meta, 'exclude', [])
 
         assert self.form, (
             'Class {serializer_class} missing "Meta.form" attribute'.format(
@@ -194,6 +195,10 @@ class FormSerializerBase(serializers.Serializer):
         # instance of serializer field for each.
         form = self.Meta.form
         for field_name, form_field in getattr(form, 'all_base_fields', form.base_fields).items():
+            # if field is specified as excluded field
+            if field_name in getattr(self.Meta, 'exclude', []):
+                continue
+
             # if field is already defined via declared fields
             # skip mapping it from forms which then honors
             # the custom validation defined on the DRF declared field

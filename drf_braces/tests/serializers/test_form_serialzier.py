@@ -186,6 +186,18 @@ class TestFormSerializerBase(unittest.TestCase):
         self.assertIsInstance(serializer_fields['bar'], fields.IntegerField)
         self.assertIsInstance(serializer_fields['other'], fields.CharField)
 
+    def test_get_fields_excluded(self):
+        serializer = self.serializer_class()
+        serializer.Meta.exclude = ['foo']
+        serializer.Meta.field_mapping.update({
+            forms.CharField: fields.BooleanField,
+        })
+
+        serializer_fields = serializer.get_fields()
+
+        self.assertIsInstance(serializer_fields, OrderedDict)
+        self.assertNotIn('foo', serializer_fields)
+
     def test_get_fields_not_mapped(self):
         serializer = self.serializer_class()
 
