@@ -2,6 +2,9 @@
 Django Rest Framework Braces
 ============================
 
+.. image:: https://badge.fury.io/py/django-rest-framework-braces.png
+    :target: http://badge.fury.io/py/django-rest-framework-braces
+
 .. image:: https://travis-ci.org/dealertrack/django-rest-framework-braces.svg?branch=master
     :target: https://travis-ci.org/dealertrack/django-rest-framework-braces
 
