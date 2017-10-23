@@ -186,6 +186,18 @@ class TestFormSerializerBase(unittest.TestCase):
         self.assertIsInstance(serializer_fields['bar'], fields.IntegerField)
         self.assertIsInstance(serializer_fields['other'], fields.CharField)
 
+    def test_get_fields_excluded(self):
+        serializer = self.serializer_class()
+        serializer.Meta.exclude = ['foo']
+        serializer.Meta.field_mapping.update({
+            forms.CharField: fields.BooleanField,
+        })
+
+        serializer_fields = serializer.get_fields()
+
+        self.assertIsInstance(serializer_fields, OrderedDict)
+        self.assertNotIn('foo', serializer_fields)
+
     def test_get_fields_not_mapped(self):
         serializer = self.serializer_class()
 
@@ -234,6 +246,21 @@ class TestFormSerializerBase(unittest.TestCase):
             'validators': [mock.sentinel.validator, mock.ANY],
         }, kwargs)
         self.assertNotIn('required', kwargs)
+
+    def test_get_field_kwargs_choice_field(self):
+        serializer = self.serializer_class()
+        form_field = forms.ChoiceField(
+            choices=[('foo', 'FOO'), ('bar', 'BAR')]
+        )
+
+        kwargs = serializer._get_field_kwargs(form_field, fields.ChoiceField)
+
+        self.assertDictContainsSubset({
+            'choices': OrderedDict([
+                ('foo', 'foo'),
+                ('bar', 'bar'),
+            ]),
+        }, kwargs)
 
     def test_validate(self):
         serializer = self.serializer_class(data={
@@ -307,8 +334,8 @@ class TestLazyLoadingValidationsMixin(unittest.TestCase):
 
         serializer.repopulate_form_fields()
 
-        self.assertDictEqual(serializer.fields['happy'].choices, {'happy': 'choices'})
-        self.assertDictEqual(serializer.fields['happy'].choice_strings_to_values,
+        self.assertDictEqual(dict(serializer.fields['happy'].choices), {'happy': 'happy'})
+        self.assertDictEqual(dict(serializer.fields['happy'].choice_strings_to_values),
                              {'happy': 'happy'})
 
     @mock.patch.object(serializers.Serializer, 'to_internal_value')

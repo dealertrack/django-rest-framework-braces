@@ -85,6 +85,7 @@ class FormSerializerOptions(object):
         self.failure_mode = getattr(meta, 'failure_mode', FormSerializerFailure.fail)
         self.minimum_required = getattr(meta, 'minimum_required', [])
         self.field_mapping = getattr(meta, 'field_mapping', {})
+        self.exclude = getattr(meta, 'exclude', [])
 
         assert self.form, (
             'Class {serializer_class} missing "Meta.form" attribute'.format(
@@ -192,7 +193,12 @@ class FormSerializerBase(serializers.Serializer):
 
         # Iterate over the form fields, creating an
         # instance of serializer field for each.
-        for field_name, form_field in self.Meta.form.base_fields.items():
+        form = self.Meta.form
+        for field_name, form_field in getattr(form, 'all_base_fields', form.base_fields).items():
+            # if field is specified as excluded field
+            if field_name in getattr(self.Meta, 'exclude', []):
+                continue
+
             # if field is already defined via declared fields
             # skip mapping it from forms which then honors
             # the custom validation defined on the DRF declared field
@@ -247,6 +253,10 @@ class FormSerializerBase(serializers.Serializer):
         :return: dictionary of attributes to set
         """
         attrs = find_matching_class_kwargs(form_field, serializer_field_class)
+
+        if 'choices' in attrs:
+            choices = OrderedDict(attrs['choices']).keys()
+            attrs['choices'] = OrderedDict(zip(choices, choices))
 
         if getattr(form_field, 'initial', None):
             attrs['default'] = form_field.initial
@@ -321,9 +331,11 @@ class LazyLoadingValidationsMixin(object):
         """
         instance = self.get_form()
 
-        for form_field_name, form_field in instance.fields.items():
+        for form_field_name, form_field in getattr(instance, 'all_fields', instance.fields).items():
             if hasattr(form_field, 'choices'):
-                self.fields[form_field_name].choices = OrderedDict(form_field.choices)
+                # let drf normalize choices down to key: key
+                # key:value is unsupported unlike in django form fields
+                self.fields[form_field_name].choices = OrderedDict(form_field.choices).keys()
                 self.fields[form_field_name].choice_strings_to_values = {
                     six.text_type(key): key for key in OrderedDict(form_field.choices).keys()
                 }
@@ -347,6 +359,6 @@ def set_form_partial_validation(form, minimum_required):
     :param minimum_required: list of minimum required fields
     :return: None
     """
-    for field_name, field in form.fields.items():
+    for field_name, field in getattr(form, 'all_fields', form.fields).items():
         if field_name not in minimum_required:
             field.required = False
