@@ -7,6 +7,7 @@ History
 
 * Added ``SwappingSerializerMixin``.
   Allows to declaratively swap fields any field instances in child serializers.
+* Added ``DoubleAsStrJsonEncoder`` for handicapped API clients.
 
 0.2.3 (2017-10-18)
 ~~~~~~~~~~~~~~~~~~
