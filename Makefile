@@ -3,68 +3,59 @@
 TEST_FLAGS=--verbosity=2
 COVER_FLAGS=--source=drf_braces
 
-help:
-	@echo "install - install all requirements including for testing"
-	@echo "install-quite - same as install but pipes all output to /dev/null"
-	@echo "clean - remove all artifacts"
-	@echo "clean-build - remove build artifacts"
-	@echo "clean-pyc - remove Python file artifacts"
-	@echo "clean-test - remove test and coverage artifacts"
-	@echo "clean-test-all - remove all test-related artifacts including tox"
-	@echo "lint - check style with flake8"
-	@echo "test - run tests quickly with the default Python"
-	@echo "test-coverage - run tests with coverage report"
-	@echo "test-all - run tests on every Python version with tox"
-	@echo "check - run all necessary steps to check validity of project"
-	@echo "release - package and upload a release"
-	@echo "dist - package"
 
-install:
+help:  ## show help
+	@grep -E '^[a-zA-Z_\-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		cut -d':' -f1- | \
+		sort | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+install:  ## install all requirements including for testing
 	pip install -r requirements-dev.txt
 
-install-quite:
+install-quite:  ## same as install but pipes all output to /dev/null
 	pip install -r requirements-dev.txt > /dev/null
 
-clean: clean-build clean-pyc clean-test-all
+clean: clean-build clean-pyc clean-test-all  ## remove all artifacts
 
-clean-build:
+clean-build:  ## remove build artifacts
 	@rm -rf build/
 	@rm -rf dist/
 	@rm -rf *.egg-info
 
-clean-pyc:
+clean-pyc:  ## remove Python file artifacts
 	-@find . -name '*.pyc' -follow -print0 | xargs -0 rm -f &> /dev/null
 	-@find . -name '*.pyo' -follow -print0 | xargs -0 rm -f &> /dev/null
 	-@find . -name '__pycache__' -type d -follow -print0 | xargs -0 rm -rf &> /dev/null
 
-clean-test:
+clean-test:  ## remove test and coverage artifacts
 	rm -rf .coverage coverage*
 	rm -rf tests/.coverage test/coverage*
 	rm -rf htmlcov/
 
-clean-test-all: clean-test
+clean-test-all: clean-test  ## remove all test-related artifacts including tox
 	rm -rf .tox/
 
-lint:
+lint:  ## check style with flake8
 	flake8 drf_braces tests
 	importanize drf_braces tests --ci
 
-test:
+test:  ## run tests quickly with the default Python
 	python tests/manage.py test ${TEST_FLAGS}
 
-test-coverage: clean-test
+coverage: clean-test  ## run tests with coverage report
 	coverage run ${COVER_FLAGS} tests/manage.py test ${TEST_FLAGS}
 	coverage report -m
 	coverage html
 
-test-all:
+test-all:  ## run tests on every Python version with tox
 	tox
 
-check: clean-build clean-pyc clean-test lint test-coverage
+check: clean-build clean-pyc clean-test lint coverage  ## run all necessary steps to check validity of project
 
-release: clean
-	python setup.py sdist upload
+release: clean  ## package and upload a release
+	python setup.py sdist bdist_wheel upload
 
 dist: clean
-	python setup.py sdist
+	python setup.py sdist bdist_wheel
 	ls -l dist

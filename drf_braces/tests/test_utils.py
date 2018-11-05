@@ -3,7 +3,7 @@ import unittest
 
 from rest_framework import fields
 
-from drf_braces.utils import (
+from ..utils import (
     find_class_args,
     find_function_args,
     get_attr_from_base_classes,

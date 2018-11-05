@@ -7,7 +7,7 @@ from dateutil.tz import tzoffset
 from django import forms
 from rest_framework import ISO_8601
 
-from drf_braces.forms.fields import ISO8601DateTimeField
+from ...forms.fields import ISO8601DateTimeField
 
 
 class TestISO8601DateTimeField(unittest.TestCase):

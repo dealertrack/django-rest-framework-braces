@@ -8,7 +8,7 @@ import six
 from django import forms
 from rest_framework import fields, serializers
 
-from drf_braces.serializers.form_serializer import (
+from ...serializers.form_serializer import (
     FormSerializer,
     FormSerializerBase,
     FormSerializerFieldMixin,

@@ -6,7 +6,7 @@ from decimal import ROUND_DOWN, Decimal
 import mock
 import pytz
 
-from drf_braces.fields.custom import (
+from ...fields.custom import (
     NonValidatingChoiceField,
     PositiveIntegerField,
     RoundedDecimalField,

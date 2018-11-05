@@ -71,13 +71,12 @@ class RoundedDecimalField(fields.DecimalField):
     """
 
     def __init__(self, max_digits=None, decimal_places=2, rounding=None, *args, **kwargs):
-        self.rounding = rounding
-
         super(RoundedDecimalField, self).__init__(
             max_digits=max_digits,
             decimal_places=decimal_places,
             *args, **kwargs
         )
+        self.rounding = rounding
 
     def to_internal_value(self, data):
         return self.quantize(super(RoundedDecimalField, self).to_internal_value(data))

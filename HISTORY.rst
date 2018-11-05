@@ -3,6 +3,11 @@
 History
 -------
 
+0.3.0 (2018-11-05)
+
+* Added ``SwappingSerializerMixin``.
+  Allows to declaratively swap fields any field instances in child serializers.
+
 0.2.3 (2017-10-18)
 ~~~~~~~~~~~~~~~~~~
 

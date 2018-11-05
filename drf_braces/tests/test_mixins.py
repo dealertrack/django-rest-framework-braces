@@ -4,7 +4,7 @@ import unittest
 import mock
 from rest_framework.generics import GenericAPIView
 
-from drf_braces.mixins import (
+from ..mixins import (
     MapDataViewMixin,
     MultipleSerializersViewMixin,
     StrippingJSONViewMixin,

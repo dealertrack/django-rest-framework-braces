@@ -7,7 +7,7 @@ import six
 from django import forms
 from rest_framework import serializers
 
-from drf_braces.forms.serializer_form import (
+from ...forms.serializer_form import (
     SERIALIZER_FORM_FIELD_MAPPING,
     SerializerForm,
     SerializerFormBase,

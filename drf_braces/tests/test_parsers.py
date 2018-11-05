@@ -6,7 +6,7 @@ from collections import OrderedDict
 import six
 from rest_framework import parsers
 
-from drf_braces.parsers import SortedJSONParser, StrippingJSONParser
+from ..parsers import SortedJSONParser, StrippingJSONParser
 
 
 class TestSortedJSONParser(unittest.TestCase):
