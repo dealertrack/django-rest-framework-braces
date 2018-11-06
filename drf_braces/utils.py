@@ -11,7 +11,7 @@ def find_function_args(func):
     Get the list of parameter names which function accepts.
     """
     try:
-        spec = inspect.getargspec(func)
+        spec = inspect.getfullargspec(func) if hasattr(inspect, 'getfullargspec') else inspect.getargspec(func)
         return [i for i in spec[0] if i not in IGNORE_ARGS]
     except TypeError:
         return []

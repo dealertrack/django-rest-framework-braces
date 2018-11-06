@@ -1,22 +1,17 @@
 language: python
 
 python:
-  - "3.6"
-  - "2.7"
-  - "pypy"
+    - "3.6"
+    # - "3.7" see https://github.com/travis-ci/travis-ci/issues/9815
+    - "2.7"
+    - "pypy"
 
-env:
-  - "$DJANGO='django<1.9'"
-  - "$DJANGO='django<2.0'"
+sudo: false
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install $DJANGO
-  - pip install -r requirements-dev.txt
-  - pip install coveralls
-  - pip freeze
+    - pip install tox-travis
+    - pip install coveralls
 
-# command to run tests, e.g. python setup.py test
-script: make check
+script: tox
 
 after_success: coveralls

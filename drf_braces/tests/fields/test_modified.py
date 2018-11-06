@@ -5,7 +5,7 @@ from decimal import Decimal
 import pytz
 from django.test.utils import override_settings
 
-from drf_braces.fields.modified import BooleanField, DateTimeField, DecimalField
+from ...fields.modified import BooleanField, DateTimeField, DecimalField
 
 
 class TestBooleanField(unittest.TestCase):

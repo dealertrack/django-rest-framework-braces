@@ -4,7 +4,7 @@ import unittest
 import mock
 from rest_framework import fields, serializers
 
-from drf_braces.serializers.enforce_validation_serializer import (
+from ...serializers.enforce_validation_serializer import (
     EnforceValidationFieldMixin,
     _create_enforce_validation_serializer,
     add_base_class_to_instance,

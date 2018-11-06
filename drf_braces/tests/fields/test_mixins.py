@@ -4,7 +4,7 @@ import unittest
 import mock
 from rest_framework import fields
 
-from drf_braces.fields.mixins import (
+from ...fields.mixins import (
     AllowBlankNullFieldMixin,
     EmptyStringFieldMixin,
     ValueAsTextFieldMixin,

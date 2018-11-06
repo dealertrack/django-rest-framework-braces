@@ -95,6 +95,21 @@ fields and if validation fails on non-specified fields, it ignores that data::
     :func:`enforce_validation_serializer <drf_braces.serializers.enforce_validation_serializer>`
     consider ``must_validate_fields`` in field validation.
 
+Swapping
+--------
+
+Sometimes it is useful to swap child serializers at runtime.
+:obj:`SwappingSerializerMixin <drf_braces.serializers.swapping.SwappingSerializerMixin>` allows to do that declaratively::
+
+    class SwappedSerializer(SwappingSerializerMixin, MyBaseSerializer):
+        class Meta(MyBaseSerializer.Meta):
+            swappable_fields = {
+                MySerializer: MyOtherSerializer,
+            }
+
+Any instance of ``MySerializer`` in any of descendant fields will get swapped to an instance
+of ``MyOtherSerializer`` however all ``*args, **kwargs`` given to ``MySerializer`` will be preserved.
+
 Mixins
 ======
 
