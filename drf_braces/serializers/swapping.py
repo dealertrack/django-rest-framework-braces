@@ -2,7 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import copy
 
-from rest_framework.serializers import BaseSerializer
+from rest_framework.serializers import BaseSerializer, ListSerializer
 
 
 class SwappingSerializerMixin(BaseSerializer):
@@ -33,7 +33,9 @@ class SwappingSerializerMixin(BaseSerializer):
             new_field = self.swap_field(field)
             if new_field is not field:
                 serializer.fields[name] = new_field
-            if isinstance(new_field, BaseSerializer):
+            if isinstance(new_field, ListSerializer):
+                self.swap_fields(new_field.child)
+            elif isinstance(new_field, BaseSerializer):
                 self.swap_fields(new_field)
         return serializer
 
