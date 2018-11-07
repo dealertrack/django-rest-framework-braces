@@ -23,6 +23,7 @@ class ParentSerializer(serializers.Serializer):
 
 class GrandParentSerializer(serializers.Serializer):
     parent = ParentSerializer()
+    parents = ParentSerializer(many=True)
 
 
 class TestSwappingSerializerMixin(unittest.TestCase):
@@ -36,3 +37,4 @@ class TestSwappingSerializerMixin(unittest.TestCase):
         swapped = Swappable()
 
         self.assertIsInstance(swapped.fields['parent'].fields['child'], ChildAlternativeSerializer)
+        self.assertIsInstance(swapped.fields['parents'].child.fields['child'], ChildAlternativeSerializer)

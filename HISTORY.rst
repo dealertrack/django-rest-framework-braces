@@ -3,7 +3,13 @@
 History
 -------
 
+0.3.1 (2018-11-07)
+~~~~~~~~~~~~~~~~~~
+
+* Fixing ``SwappingSerializerMixin`` by supporting ``ListSerializer``
+
 0.3.0 (2018-11-05)
+~~~~~~~~~~~~~~~~~~
 
 * Added ``SwappingSerializerMixin``.
   Allows to declaratively swap fields any field instances in child serializers.
