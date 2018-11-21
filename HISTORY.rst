@@ -3,6 +3,11 @@
 History
 -------
 
+0.3.2 (2018-11-21)
+~~~~~~~~~~~~~~~~~~
+
+* Fixing ``DoubleAsStrJsonEncoder`` by subclassing from DRF which supports datetimes, etc
+
 0.3.1 (2018-11-07)
 ~~~~~~~~~~~~~~~~~~
 
