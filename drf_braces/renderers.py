@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
 from collections import Mapping
-from json import JSONEncoder
 
 import six
 from rest_framework.renderers import JSONRenderer
+from rest_framework.utils.encoders import JSONEncoder
 
 
 class DoubleAsStrJsonEncoder(JSONEncoder):
