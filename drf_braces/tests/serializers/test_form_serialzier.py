@@ -271,7 +271,6 @@ class TestFormSerializerBase(unittest.TestCase):
 
         self.assertTrue(serializer.is_valid())
         self.assertDictEqual(serializer.validated_data, {
-            'other': 'stuff',
             'foo': 'hello',
             'bar': 257,
             'happy': '',

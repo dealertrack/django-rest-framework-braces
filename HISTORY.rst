@@ -3,6 +3,11 @@
 History
 -------
 
+0.3.3 (2019-02-21)
+~~~~~~~~~~~~~~~~~~
+
+* Fixing invalid data being copied over in ``FormSerializer`` when fail mode is not ``fail``
+
 0.3.2 (2018-11-21)
 ~~~~~~~~~~~~~~~~~~
 
