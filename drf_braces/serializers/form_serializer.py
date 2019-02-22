@@ -286,7 +286,7 @@ class FormSerializerBase(serializers.Serializer):
                 raise serializers.ValidationError(form.errors)
 
             else:
-                cleaned_data = data
+                cleaned_data = {k: v for k, v in data.items() if k not in form.errors}
                 # use any cleaned data form might of validated right until
                 # this moment even if validation failed
                 cleaned_data.update(_cleaned_data)
