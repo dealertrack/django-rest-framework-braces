@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import unittest
 
 import mock
-from rest_framework import fields, serializers
+from rest_framework import exceptions, fields, serializers
 
 from ...serializers.enforce_validation_serializer import (
     EnforceValidationFieldMixin,
@@ -31,8 +31,17 @@ class TestManySerializer(serializers.Serializer):
     many = TestSerializer(many=True)
 
 
+class CaptureFailedFieldValidationFieldMixin(EnforceValidationFieldMixin):
+
+    def capture_failed_field(self, field_name, field_data, exception):
+        self._failed_validation = {field_name: (field_data, exception)}
+
+
 class TestEnforceValidationFieldMixin(unittest.TestCase):
     class Field(EnforceValidationFieldMixin, fields.IntegerField):
+        pass
+
+    class CaptureFailedField(CaptureFailedFieldValidationFieldMixin, fields.TimeField):
         pass
 
     def test_run_validation_must_validate(self):
@@ -65,6 +74,17 @@ class TestEnforceValidationFieldMixin(unittest.TestCase):
 
         with self.assertRaises(serializers.SkipField):
             field.run_validation('hello')
+
+    def test_run_validation_must_validate_ignore_capture(self):
+        field = self.CaptureFailedField()
+        field.field_name = 'field'
+        field.parent = mock.MagicMock(must_validate_fields=[''])
+
+        with self.assertRaises(serializers.SkipField):
+            field.run_validation('Bad Time')
+
+        self.assertEqual('Bad Time', field._failed_validation['field'][0])
+        self.assertIsInstance(field._failed_validation['field'][1], exceptions.ValidationError)
 
 
 class TestUtils(unittest.TestCase):

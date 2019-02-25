@@ -6,7 +6,7 @@ from datetime import datetime
 import mock
 import six
 from django import forms
-from rest_framework import fields, serializers
+from rest_framework import exceptions, fields, serializers
 
 from ...serializers.form_serializer import (
     FormSerializer,
@@ -42,6 +42,12 @@ class TestForm(forms.Form):
         return data
 
 
+class CaptureFailedFieldValidationFieldMixin(FormSerializerFieldMixin):
+
+    def capture_failed_field(self, field_name, field_data, exception):
+        self._failed_validation = {field_name: (field_data, exception)}
+
+
 class TestFormSerializerFieldMixin(unittest.TestCase):
     def setUp(self):
         super(TestFormSerializerFieldMixin, self).setUp()
@@ -49,8 +55,12 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
         class Field(FormSerializerFieldMixin, fields.IntegerField):
             pass
 
+        class CaptureFailedField(CaptureFailedFieldValidationFieldMixin, fields.TimeField):
+            pass
+
         class Serializer(serializers.Serializer):
             field = Field()
+            field_two = CaptureFailedField()
 
             class Meta(object):
                 minimum_required = []
@@ -84,6 +94,18 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
 
         with self.assertRaises(fields.SkipField):
             self.field.run_validation('a')
+
+    def test_run_validation_skip_capture(self):
+        self.serializer.partial = True
+        self.serializer.Meta.failure_mode = 'drop'
+        self.serializer.Meta.minimum_required = []
+        self.field_two = self.serializer.fields['field_two']
+
+        with self.assertRaises(fields.SkipField):
+            self.field_two.run_validation('Really Bad Time')
+
+        self.assertEqual('Really Bad Time', self.field_two._failed_validation['field_two'][0])
+        self.assertIsInstance(self.field_two._failed_validation['field_two'][1], exceptions.ValidationError)
 
 
 class TestUtils(unittest.TestCase):

@@ -3,6 +3,12 @@
 History
 -------
 
+0.3.4 (2019-02-25)
+~~~~~~~~~~~~~~~~~~
+
+* Added ``EnforceValidationFieldMixin.capture_failed_field`` and ``FormSerializerFieldMixin.capture_failed_field`` to
+  capture the optional fields that failed.
+
 0.3.3 (2019-02-21)
 ~~~~~~~~~~~~~~~~~~
 

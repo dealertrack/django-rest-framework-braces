@@ -37,7 +37,7 @@ class FormSerializerFieldMixin(object):
     def run_validation(self, data):
         try:
             return super(FormSerializerFieldMixin, self).run_validation(data)
-        except (serializers.ValidationError, forms.ValidationError):
+        except (serializers.ValidationError, forms.ValidationError) as e:
             # Only handle a ValidationError if the full validation is
             # requested or if field is in minimum required in the case
             # of partial validation.
@@ -45,13 +45,26 @@ class FormSerializerFieldMixin(object):
                     self.parent.Meta.failure_mode == FormSerializerFailure.fail,
                     self.field_name in self.parent.Meta.minimum_required]):
                 raise
+            self.capture_failed_field(self.field_name, data, e)
             raise serializers.SkipField
 
+    def capture_failed_field(self, field_name, field_data, exception):
+        """Hook for capturing invalid fields. This is used to track which fields have been skipped.
+        Args:
+            field_name (str): the name of the field whose data failed to validate
+            field_data (object): the data of the field that failed validation
+            exception (Exception): raised exception for validation error
 
-def make_form_serializer_field(field_class):
+        Returns:
+            Not meant to return anything.
+        """
+        pass
+
+
+def make_form_serializer_field(field_class, validation_form_serializer_field_mixin_class=FormSerializerFieldMixin):
     return type(
         get_class_name_with_new_suffix(field_class, 'Field', 'FormSerializerField'),
-        (FormSerializerFieldMixin, field_class,),
+        (validation_form_serializer_field_mixin_class, field_class,),
         {}
     )
 
