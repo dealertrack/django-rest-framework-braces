@@ -172,6 +172,9 @@ class TestFormSerializerBase(unittest.TestCase):
                 minimum_required = ['foo']
                 field_mapping = {}
 
+            def capture_failed_fields(self, raw_data, form_errors):
+                self._failed_validation = {k: v for k, v in raw_data.items() if k in form_errors}
+
         self.serializer_class = Serializer
 
     def test_init(self):
@@ -325,6 +328,22 @@ class TestFormSerializerBase(unittest.TestCase):
         self.assertDictEqual(serializer.errors, {
             'other': ['Enter a valid date/time.'],
         })
+
+    def test_validate_capture_errors(self):
+        self.serializer_class.Meta.failure_mode = 'drop'
+        serializer = self.serializer_class(data={
+            'foo': 'Chime Oduzo',
+            'bar': 45,
+            'happy': 'happy',
+            'other': 'Extremely bad time'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertDictEqual(serializer.validated_data, {
+            'foo': 'Chime Oduzo',
+            'bar': 45,
+            'happy': 'happy',
+        })
+        self.assertDictEqual({'other': 'Extremely bad time'}, serializer._failed_validation)
 
     def test_to_representation(self):
         with self.assertRaises(NotImplementedError):

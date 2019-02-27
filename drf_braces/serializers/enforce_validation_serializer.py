@@ -38,7 +38,9 @@ class EnforceValidationFieldMixin(object):
                 )
 
     def capture_failed_field(self, field_name, field_data, exception):
-        """Hook for capturing invalid fields. This is used to track which fields have been skipped.
+        """
+        Hook for capturing invalid fields. This is used to track which fields have been skipped.
+
         Args:
             field_name (str): the name of the field whose data failed to validate
             field_data (object): the data of the field that failed validation
@@ -47,7 +49,6 @@ class EnforceValidationFieldMixin(object):
         Returns:
             Not meant to return anything.
         """
-        pass
 
 
 def _create_enforce_validation_serializer(serializer, strict_mode_by_default=True, validation_serializer_field_mixin_class=EnforceValidationFieldMixin):
@@ -100,7 +101,8 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         if isinstance(serializer, serializers.ListSerializer):
             serializer.child = _create_enforce_validation_serializer(
                 serializer.child,
-                strict_mode_by_default=strict_mode_by_default
+                strict_mode_by_default=strict_mode_by_default,
+                validation_serializer_field_mixin_class=validation_serializer_field_mixin_class,
             )
 
             # kwargs are used to take a deepcopy of the fields
@@ -137,7 +139,8 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         if isinstance(field, serializers.BaseSerializer):
             replacement = _create_enforce_validation_serializer(
                 field,
-                strict_mode_by_default=strict_mode_by_default
+                strict_mode_by_default=strict_mode_by_default,
+                validation_serializer_field_mixin_class = validation_serializer_field_mixin_class,
             )
 
         elif isinstance(field, serializers.Field):
