@@ -84,7 +84,7 @@ class TestEnforceValidationFieldMixin(unittest.TestCase):
             field.run_validation('Bad Time')
 
         self.assertEqual('Bad Time', field._failed_validation['field'][0])
-        self.assertEqual('Incorrect Date/Time', field._failed_validation['field'][1])
+        self.assertIn('Time has wrong format. Use one of these formats instead', field._failed_validation['field'][1])
 
 
 class TestUtils(unittest.TestCase):

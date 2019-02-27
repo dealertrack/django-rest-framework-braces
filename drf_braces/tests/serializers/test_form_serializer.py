@@ -105,7 +105,7 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
             self.field_two.run_validation('Really Bad Time')
 
         self.assertEqual('Really Bad Time', self.field_two._failed_validation['field_two'][0])
-        self.assertEqual('Invalid Date/Time', self.field_two._failed_validation['field_two'][1])
+        self.assertIn('Time has wrong format. Use one of these formats instead', self.field_two._failed_validation['field_two'][1])
 
 
 class TestUtils(unittest.TestCase):
