@@ -44,8 +44,8 @@ class TestForm(forms.Form):
 
 class CaptureFailedFieldValidationFieldMixin(FormSerializerFieldMixin):
 
-    def capture_failed_field(self, field_name, field_data, exception):
-        self._failed_validation = {field_name: (field_data, exception)}
+    def capture_failed_field(self, field_name, field_data, error_msg):
+        self._failed_validation = {field_name: (field_data, error_msg)}
 
 
 class TestFormSerializerFieldMixin(unittest.TestCase):
@@ -105,7 +105,7 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
             self.field_two.run_validation('Really Bad Time')
 
         self.assertEqual('Really Bad Time', self.field_two._failed_validation['field_two'][0])
-        self.assertIsInstance(self.field_two._failed_validation['field_two'][1], exceptions.ValidationError)
+        self.assertEqual('Invalid Date/Time', self.field_two._failed_validation['field_two'][1])
 
 
 class TestUtils(unittest.TestCase):

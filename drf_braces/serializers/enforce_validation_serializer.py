@@ -31,20 +31,20 @@ class EnforceValidationFieldMixin(object):
             if must_validate_fields is None or field_name in must_validate_fields:
                 raise
             else:
-                self.capture_failed_field(field_name, data, e)
+                self.capture_failed_field(field_name, data, e.detail)
                 raise fields.SkipField(
                     'This field "{}" is being skipped as per enforce validation logic.'
                     ''.format(field_name)
                 )
 
-    def capture_failed_field(self, field_name, field_data, exception):
+    def capture_failed_field(self, field_name, field_data, error_msg):
         """
         Hook for capturing invalid fields. This is used to track which fields have been skipped.
 
         Args:
             field_name (str): the name of the field whose data failed to validate
             field_data (object): the data of the field that failed validation
-            exception (Exception): raised exception for validation error
+            error_msg (str): validation error message
 
         Returns:
             Not meant to return anything.

@@ -48,14 +48,14 @@ class FormSerializerFieldMixin(object):
             self.capture_failed_field(self.field_name, data, e)
             raise serializers.SkipField
 
-    def capture_failed_field(self, field_name, field_data, exception):
+    def capture_failed_field(self, field_name, field_data, error_msg):
         """
         Hook for capturing invalid fields. This is used to track which fields have been skipped.
 
         Args:
             field_name (str): the name of the field whose data failed to validate
             field_data (object): the data of the field that failed validation
-            exception (Exception): raised exception for validation error
+            error_msg (str): validation error message
 
         Returns:
             Not meant to return anything.

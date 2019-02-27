@@ -33,8 +33,8 @@ class TestManySerializer(serializers.Serializer):
 
 class CaptureFailedFieldValidationFieldMixin(EnforceValidationFieldMixin):
 
-    def capture_failed_field(self, field_name, field_data, exception):
-        self._failed_validation = {field_name: (field_data, exception)}
+    def capture_failed_field(self, field_name, field_data, error_msg):
+        self._failed_validation = {field_name: (field_data, error_msg)}
 
 
 class TestEnforceValidationFieldMixin(unittest.TestCase):
@@ -84,7 +84,7 @@ class TestEnforceValidationFieldMixin(unittest.TestCase):
             field.run_validation('Bad Time')
 
         self.assertEqual('Bad Time', field._failed_validation['field'][0])
-        self.assertIsInstance(field._failed_validation['field'][1], exceptions.ValidationError)
+        self.assertEqual('Incorrect Date/Time', field._failed_validation['field'][1])
 
 
 class TestUtils(unittest.TestCase):
