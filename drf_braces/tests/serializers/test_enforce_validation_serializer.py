@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 import unittest
 
 import mock
-from rest_framework import fields, serializers
 import six
+from rest_framework import fields, serializers
 
 from ...serializers.enforce_validation_serializer import (
     EnforceValidationFieldMixin,
