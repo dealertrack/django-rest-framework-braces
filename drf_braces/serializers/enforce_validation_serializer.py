@@ -140,7 +140,7 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
             replacement = _create_enforce_validation_serializer(
                 field,
                 strict_mode_by_default=strict_mode_by_default,
-                validation_serializer_field_mixin_class = validation_serializer_field_mixin_class,
+                validation_serializer_field_mixin_class=validation_serializer_field_mixin_class,
             )
 
         elif isinstance(field, serializers.Field):
