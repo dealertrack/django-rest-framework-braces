@@ -6,7 +6,7 @@ from datetime import datetime
 import mock
 import six
 from django import forms
-from rest_framework import exceptions, fields, serializers
+from rest_framework import fields, serializers
 
 from ...serializers.form_serializer import (
     FormSerializer,
