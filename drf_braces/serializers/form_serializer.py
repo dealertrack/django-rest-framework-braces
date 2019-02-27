@@ -45,7 +45,7 @@ class FormSerializerFieldMixin(object):
                     self.parent.Meta.failure_mode == FormSerializerFailure.fail,
                     self.field_name in self.parent.Meta.minimum_required]):
                 raise
-            self.capture_failed_field(self.field_name, data, e)
+            self.capture_failed_field(self.field_name, data, e.detail)
             raise serializers.SkipField
 
     def capture_failed_field(self, field_name, field_data, error_msg):
