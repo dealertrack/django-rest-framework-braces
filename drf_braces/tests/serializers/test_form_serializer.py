@@ -334,14 +334,13 @@ class TestFormSerializerBase(unittest.TestCase):
         serializer = self.serializer_class(data={
             'foo': 'Chime Oduzo',
             'bar': 45,
-            'happy': 'choices',
             'other': 'Extremely bad time'
         })
         self.assertTrue(serializer.is_valid())
         self.assertDictEqual(serializer.validated_data, {
             'foo': 'Chime Oduzo',
             'bar': 257,
-            'happy': 'choices',
+            'happy': '',
         })
         self.assertDictEqual({'other': 'Extremely bad time'}, serializer._failed_validation)
 
