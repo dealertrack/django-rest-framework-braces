@@ -42,6 +42,12 @@ class TestForm(forms.Form):
         return data
 
 
+class CaptureFailedFieldValidationFieldMixin(FormSerializerFieldMixin):
+
+    def capture_failed_field(self, field_name, field_data, error_msg):
+        self._failed_validation = {field_name: (field_data, error_msg)}
+
+
 class TestFormSerializerFieldMixin(unittest.TestCase):
     def setUp(self):
         super(TestFormSerializerFieldMixin, self).setUp()
@@ -49,8 +55,12 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
         class Field(FormSerializerFieldMixin, fields.IntegerField):
             pass
 
+        class CaptureFailedField(CaptureFailedFieldValidationFieldMixin, fields.TimeField):
+            pass
+
         class Serializer(serializers.Serializer):
             field = Field()
+            field_two = CaptureFailedField()
 
             class Meta(object):
                 minimum_required = []
@@ -84,6 +94,18 @@ class TestFormSerializerFieldMixin(unittest.TestCase):
 
         with self.assertRaises(fields.SkipField):
             self.field.run_validation('a')
+
+    def test_run_validation_skip_capture(self):
+        self.serializer.partial = True
+        self.serializer.Meta.failure_mode = 'drop'
+        self.serializer.Meta.minimum_required = []
+        self.field_two = self.serializer.fields['field_two']
+
+        with self.assertRaises(fields.SkipField):
+            self.field_two.run_validation('Really Bad Time')
+
+        self.assertEqual('Really Bad Time', self.field_two._failed_validation['field_two'][0])
+        self.assertIn('Time has wrong format. Use one of these formats instead', six.text_type(self.field_two._failed_validation['field_two'][1]))
 
 
 class TestUtils(unittest.TestCase):
@@ -149,6 +171,9 @@ class TestFormSerializerBase(unittest.TestCase):
                 form = TestForm
                 minimum_required = ['foo']
                 field_mapping = {}
+
+            def capture_failed_fields(self, raw_data, form_errors):
+                self._failed_validation = {k: v for k, v in raw_data.items() if k in form_errors}
 
         self.serializer_class = Serializer
 
@@ -303,6 +328,21 @@ class TestFormSerializerBase(unittest.TestCase):
         self.assertDictEqual(serializer.errors, {
             'other': ['Enter a valid date/time.'],
         })
+
+    def test_validate_capture_errors(self):
+        self.serializer_class.Meta.failure_mode = 'drop'
+        serializer = self.serializer_class(data={
+            'foo': 'Chime Oduzo',
+            'bar': 45,
+            'other': 'Extremely bad time'
+        })
+        self.assertTrue(serializer.is_valid())
+        self.assertDictEqual(serializer.validated_data, {
+            'foo': 'Chime Oduzo',
+            'bar': 257,
+            'happy': '',
+        })
+        self.assertDictEqual({'other': 'Extremely bad time'}, serializer._failed_validation)
 
     def test_to_representation(self):
         with self.assertRaises(NotImplementedError):

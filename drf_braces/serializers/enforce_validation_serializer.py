@@ -21,7 +21,7 @@ class EnforceValidationFieldMixin(object):
     def run_validation(self, data=empty):
         try:
             return super(EnforceValidationFieldMixin, self).run_validation(data)
-        except serializers.ValidationError:
+        except serializers.ValidationError as e:
             must_validate_fields = getattr(self.parent, 'must_validate_fields', None)
             field_name = getattr(self, 'field_name')
 
@@ -31,13 +31,27 @@ class EnforceValidationFieldMixin(object):
             if must_validate_fields is None or field_name in must_validate_fields:
                 raise
             else:
+                self.capture_failed_field(field_name, data, e.detail)
                 raise fields.SkipField(
                     'This field "{}" is being skipped as per enforce validation logic.'
                     ''.format(field_name)
                 )
 
+    def capture_failed_field(self, field_name, field_data, error_msg):
+        """
+        Hook for capturing invalid fields. This is used to track which fields have been skipped.
 
-def _create_enforce_validation_serializer(serializer, strict_mode_by_default=True):
+        Args:
+            field_name (str): the name of the field whose data failed to validate
+            field_data (object): the data of the field that failed validation
+            error_msg (str): validation error message
+
+        Returns:
+            Not meant to return anything.
+        """
+
+
+def _create_enforce_validation_serializer(serializer, strict_mode_by_default=True, validation_serializer_field_mixin_class=EnforceValidationFieldMixin):
     """
     Recursively creates a copy of a given serializer which enforces ``must_validate_fields``.
 
@@ -51,6 +65,7 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
             when ``must_validate_fields`` is not defined.
             If ``True``, then all fields must be validated by default
             and if ``False``, then all fields can be dropped.
+        validation_serializer_field_mixin_class (type): the class used to validate serializer fields
 
     Returns:
         Recursive copy of the ``serializer`` which will enforce ``must_validate_fields``.
@@ -86,7 +101,8 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         if isinstance(serializer, serializers.ListSerializer):
             serializer.child = _create_enforce_validation_serializer(
                 serializer.child,
-                strict_mode_by_default=strict_mode_by_default
+                strict_mode_by_default=strict_mode_by_default,
+                validation_serializer_field_mixin_class=validation_serializer_field_mixin_class,
             )
 
             # kwargs are used to take a deepcopy of the fields
@@ -123,13 +139,14 @@ def _create_enforce_validation_serializer(serializer, strict_mode_by_default=Tru
         if isinstance(field, serializers.BaseSerializer):
             replacement = _create_enforce_validation_serializer(
                 field,
-                strict_mode_by_default=strict_mode_by_default
+                strict_mode_by_default=strict_mode_by_default,
+                validation_serializer_field_mixin_class=validation_serializer_field_mixin_class,
             )
 
         elif isinstance(field, serializers.Field):
             replacement = add_base_class_to_instance(
                 field,
-                EnforceValidationFieldMixin,
+                validation_serializer_field_mixin_class,
                 new_name=get_class_name_with_new_suffix(
                     field.__class__,
                     'Field',
