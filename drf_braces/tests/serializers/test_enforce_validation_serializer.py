@@ -3,6 +3,7 @@ import unittest
 
 import mock
 from rest_framework import fields, serializers
+import six
 
 from ...serializers.enforce_validation_serializer import (
     EnforceValidationFieldMixin,
@@ -84,7 +85,7 @@ class TestEnforceValidationFieldMixin(unittest.TestCase):
             field.run_validation('Bad Time')
 
         self.assertEqual('Bad Time', field._failed_validation['field'][0])
-        self.assertIn('Time has wrong format. Use one of these formats instead', field._failed_validation['field'][1])
+        self.assertIn('Time has wrong format. Use one of these formats instead', six.text_type(field._failed_validation['field'][1]))
 
 
 class TestUtils(unittest.TestCase):
