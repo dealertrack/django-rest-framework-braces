@@ -41,9 +41,7 @@ class FormSerializerFieldMixin(object):
             # Only handle a ValidationError if the full validation is
             # requested or if field is in minimum required in the case
             # of partial validation.
-            if any([not self.parent.partial,
-                    self.parent.Meta.failure_mode == FormSerializerFailure.fail,
-                    self.field_name in self.parent.Meta.minimum_required]):
+            if self.field_name in self.parent.Meta.minimum_required:
                 raise
             self.capture_failed_field(self.field_name, data, e.detail)
             raise serializers.SkipField
