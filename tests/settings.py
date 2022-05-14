@@ -15,7 +15,6 @@ INSTALLED_APPS = [
     'drf_braces',
     'tests',
 
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
