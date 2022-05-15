@@ -12,7 +12,10 @@ def find_function_args(func):
     """
     try:
         spec = inspect.getfullargspec(func) if hasattr(inspect, 'getfullargspec') else inspect.getargspec(func)
-        return [i for i in spec[0] if i not in IGNORE_ARGS]
+        arg_list = spec[0]
+        if hasattr(spec, 'kwonlyargs'):
+            arg_list += spec.kwonlyargs
+        return [i for i in arg_list if i not in IGNORE_ARGS]
     except TypeError:
         return []
 
