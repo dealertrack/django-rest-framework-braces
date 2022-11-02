@@ -24,7 +24,6 @@ FIELDS = [
     'IntegerField',
     'IPAddressField',
     'MultipleChoiceField',
-    'NullBooleanField',
     'RegexField',
     'SlugField',
     'TimeField',
